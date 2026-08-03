@@ -1,0 +1,547 @@
+<% content_for :main_class, "jb-main-wide jb-editor-main" %>
+
+<div class="jb-page-editor">
+  <aside class="jb-editor-sidebar" aria-label="Page editor">
+    <% if @selected_page_component %>
+      <div class="jb-editor-pagebar">
+        <%= link_to "← Back to page", edit_admin_page_path(@page, site_id: @page.site_id, tab: "layout"), class: "jb-button jb-button-secondary" %>
+      </div>
+    <% else %>
+      <div class="jb-editor-pagebar">
+        <details class="jb-page-switcher">
+          <summary>
+            <span><%= @page.title %></span>
+          </summary>
+          <div class="jb-page-switcher-menu">
+            <% @editor_pages.each do |page| %>
+              <%= link_to edit_admin_page_path(page, site_id: page.site_id, tab: @editor_tab), class: ("is-active" if page == @page) do %>
+                <strong><%= page.title %></strong>
+                <span><%= page.path %></span>
+              <% end %>
+            <% end %>
+          </div>
+        </details>
+      </div>
+
+      <div class="jb-editor-tabs" role="tablist" aria-label="Editor sections">
+        <%= link_to "Layout", edit_admin_page_path(@page, site_id: @page.site_id, tab: "layout"), class: ("is-active" if @editor_tab == "layout"), role: "tab", "aria-selected": (@editor_tab == "layout") %>
+        <%= link_to "Settings", edit_admin_page_path(@page, site_id: @page.site_id, tab: "settings"), class: ("is-active" if @editor_tab == "settings"), role: "tab", "aria-selected": (@editor_tab == "settings") %>
+      </div>
+    <% end %>
+
+    <%= render "journeybook/admin/shared/errors", record: @page %>
+
+    <% if @editor_tab == "settings" %>
+      <%= form_with model: [:admin, @page], url: admin_page_path(@page, tab: "settings"), method: :patch, class: "jb-form jb-editor-panel", data: { live_preview_form: true } do |form| %>
+        <div class="jb-field">
+          <%= form.label :site_id %>
+          <%= form.collection_select :site_id, @sites, :id, :name %>
+        </div>
+        <div class="jb-field">
+          <%= form.label :page_type %>
+          <%= form.select :page_type, Journeybook::Page::PAGE_TYPES %>
+        </div>
+        <div class="jb-field">
+          <%= form.label :status %>
+          <%= form.select :status, Journeybook::Page::STATUSES %>
+        </div>
+        <div class="jb-field">
+          <%= form.label :title %>
+          <%= form.text_field :title, required: true %>
+        </div>
+        <div class="jb-field">
+          <%= form.label :path %>
+          <%= form.text_field :path, required: true, placeholder: "/about" %>
+        </div>
+        <div class="jb-field">
+          <%= form.label :author_name %>
+          <%= form.text_field :author_name, placeholder: "Optional author byline" %>
+        </div>
+        <div class="jb-field">
+          <%= form.label :topic %>
+          <%= form.text_field :topic, placeholder: "Optional topic, e.g. HR" %>
+        </div>
+        <% if @page.kb_article? %>
+          <div class="jb-field">
+            <%= form.label :parent_id, "Parent help article" %>
+            <%= form.collection_select :parent_id, @parent_pages, :id, :title, include_blank: "Top-level help article" %>
+          </div>
+          <div class="jb-field">
+            <%= form.label :position, "Order within this section" %>
+            <%= form.number_field :position, min: 0 %>
+          </div>
+        <% end %>
+        <div class="jb-field">
+          <%= form.label :locale %>
+          <%= form.text_field :locale, required: true %>
+        </div>
+        <div class="jb-field">
+          <%= form.label :meta_title %>
+          <%= form.text_field :meta_title %>
+        </div>
+        <div class="jb-field">
+          <%= form.label :meta_description %>
+          <%= form.text_area :meta_description, class: "jb-editor-textarea-short" %>
+        </div>
+        <div class="jb-field jb-field-short">
+          <%= form.label :excerpt %>
+          <%= form.text_area :excerpt, class: "jb-editor-textarea-short" %>
+          <small class="jb-help">Short summary for blog cards, RSS, and SEO.</small>
+        </div>
+        <div class="jb-field">
+          <%= form.label :published_at %>
+          <%= form.datetime_field :published_at %>
+          <small class="jb-help">Future dates schedule the page.</small>
+        </div>
+
+        <div class="jb-actions">
+          <%= form.submit "Save settings", class: "jb-button" %>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="jb-editor-panel">
+        <% if @selected_page_component %>
+          <% props = @selected_component_registration&.normalized_props || {} %>
+          <%= form_with url: component_admin_page_path(@page, site_id: @page.site_id), method: :patch, class: "jb-form jb-component-editor", data: { live_preview_form: true } do |form| %>
+            <%= hidden_field_tag :component_index, @selected_component_index %>
+            <div>
+              <h2 class="jb-editor-subtitle"><%= @selected_page_component.name %> #<%= @selected_component_index + 1 %></h2>
+            </div>
+
+            <% if props.any? %>
+              <% props.each do |name, prop| %>
+                <% value = @selected_page_component.props[name.to_sym] %>
+                <div class="jb-field">
+                  <%= label_tag "component_props_#{name}", prop[:label] %>
+                   <% case prop[:type] %>
+                   <% when :collection %>
+                     <%= render "collection_field", name: name, prop: prop, value: value %>
+                   <% when :long_text %>
+                    <%= text_area_tag "component_props[#{name}]", value, id: "component_props_#{name}", class: "jb-editor-textarea-short" %>
+                    <% when :image %>
+                     <% if @media_assets.any? %>
+                       <input type="hidden" name="component_props[<%= name %>]" value="<%= value %>" id="component_props_<%= name %>">
+                       <button type="button" class="jb-image-picker-trigger" data-image-picker-open>
+                         <% if value.present? %><%= image_tag value, alt: "", class: "jb-image-picker-preview" %><% end %>
+                         <span data-image-picker-label><%= value.present? ? "Change image" : "Select image" %></span>
+                       </button>
+                     <% else %>
+                       <%= link_to "Add an image to the library", admin_media_assets_path, class: "jb-link-button" %>
+                    <% end %>
+                   <% when :url %>
+                     <%= render "url_field", name: name, value: value %>
+                   <% when :video %>
+                     <%= text_field_tag "component_props[#{name}]", value, id: "component_props_#{name}", placeholder: "https://www.youtube.com/watch?v=..." %>
+                   <% when :select %>
+                     <%= select_tag "component_props[#{name}]", options_for_select(prop[:options], value), id: "component_props_#{name}" %>
+                   <% else %>
+                    <%= text_field_tag "component_props[#{name}]", value, id: "component_props_#{name}" %>
+                  <% end %>
+                </div>
+              <% end %>
+            <% else %>
+              <p class="jb-subtitle">This component has no registered editable props.</p>
+            <% end %>
+
+            <div class="jb-actions jb-component-editor-actions">
+              <%= form.submit "Save", class: "jb-button jb-button-secondary" %>
+              <%= form.button "Save and back", name: "save_and_back", value: "true", class: "jb-button" %>
+            </div>
+          <% end %>
+          <%= render "image_picker_modal" if @media_assets.any? %>
+        <% elsif @page_components.any? %>
+          <nav class="jb-component-instance-list" aria-label="Components on this page" data-sortable-list data-sortable-url="<%= reorder_components_admin_page_path(@page, site_id: @page.site_id) %>" data-sortable-param="component_indexes">
+            <% @page_components.each_with_index do |component, index| %>
+              <div class="jb-component-instance <%= "is-hidden" if component.hidden? %>" data-sortable-item data-sortable-id="<%= index %>" data-preview-component-index="<%= index %>" draggable="true">
+                <%= render "journeybook/admin/shared/drag_handle" %>
+                <div class="jb-component-instance-main">
+                  <div class="jb-component-instance-summary">
+                    <strong><%= component.name %></strong>
+                    <% if component.props[:title].present? %>
+                      <span><%= component.props[:title] %></span>
+                    <% end %>
+                  </div>
+                  <div class="jb-component-instance-actions">
+                    <%= link_to "Edit", edit_admin_page_path(@page, site_id: @page.site_id, tab: "layout", component: index), class: "jb-link-button jb-link-button-small" %>
+                    <%= button_to component.hidden? ? "Show" : "Hide", toggle_component_visibility_admin_page_path(@page, site_id: @page.site_id), method: :patch, params: { component_index: index }, class: "jb-link-button jb-link-button-small" %>
+                    <%= button_to "Delete", delete_component_admin_page_path(@page, site_id: @page.site_id), method: :delete, params: { component_index: index }, class: "jb-link-button jb-link-button-small jb-link-button-danger", form: { onsubmit: "return confirm('Delete this component?')" } %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </nav>
+        <% else %>
+          <p class="jb-subtitle">No Journeybook components are currently present in this page markdown.</p>
+        <% end %>
+
+        <% unless @selected_page_component %>
+          <div class="jb-editor-panel-footer">
+            <%= link_to "Add component", new_component_admin_page_path(@page, site_id: @page.site_id), class: "jb-button" %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </aside>
+
+  <section class="jb-editor-preview" aria-label="Page preview">
+    <div class="jb-editor-preview-topbar">
+      <%= link_to "Edit Page", source_admin_page_path(@page, site_id: @page.site_id), class: "jb-button jb-button-secondary jb-edit-page-shortcut", data: { edit_page_shortcut: true }, hidden: true %>
+      <div class="jb-preview-tabs" role="tablist" aria-label="Preview viewport">
+        <button type="button" class="is-active" data-preview-mode="desktop" role="tab" aria-selected="true">Desktop</button>
+        <button type="button" data-preview-mode="mobile" role="tab" aria-selected="false">Mobile</button>
+      </div>
+      <div class="jb-editor-preview-actions">
+        <% publishing_errors = @page.component_validation_errors %>
+        <% if publishing_errors.any? %>
+          <%= link_to errors_admin_page_path(@page, site_id: @page.site_id), class: "jb-button jb-button-danger" do %>
+            <span aria-hidden="true">!</span> Errors
+          <% end %>
+        <% end %>
+        <% if @page.published? %>
+          <%= button_to "Unpublish", draft_admin_page_path(@page, site_id: @page.site_id), method: :patch, class: "jb-button jb-button-secondary" %>
+        <% else %>
+          <%= button_to "Publish", publish_admin_page_path(@page, site_id: @page.site_id), method: :patch, class: "jb-button" %>
+        <% end %>
+      </div>
+    </div>
+    <div class="jb-editor-preview-stage">
+      <iframe id="jb-editor-preview-frame" src="<%= preview_admin_page_path(@page, component: @selected_component_index) %>" title="Preview of <%= @page.title %>"></iframe>
+    </div>
+  </section>
+</div>
+
+<%= javascript_tag nonce: true do %>
+  (() => {
+    const previewFrame = document.getElementById("jb-editor-preview-frame");
+    const editor = document.querySelector(".jb-page-editor");
+    const previewModeButtons = document.querySelectorAll("[data-preview-mode]");
+    const forms = document.querySelectorAll("[data-live-preview-form]");
+    const previewComponents = document.querySelectorAll("[data-preview-component-index]");
+    const imagePickerModal = document.querySelector("[data-image-picker-modal]");
+    const editPageShortcut = document.querySelector("[data-edit-page-shortcut]");
+    const csrfToken = document.querySelector("meta[name='csrf-token']")?.content;
+    const previewModeStorageKey = "journeybook.previewMode";
+    const debounceDelay = 500;
+    let saveTimer;
+    let saveRequest = 0;
+    let imagePickerTarget;
+
+    const toggleEditPageShortcut = (visible) => {
+      if (editPageShortcut) editPageShortcut.hidden = !visible;
+    };
+
+    window.addEventListener("keydown", (event) => {
+      if (event.key === "Shift") toggleEditPageShortcut(true);
+    });
+    window.addEventListener("keyup", (event) => {
+      if (event.key === "Shift") toggleEditPageShortcut(false);
+    });
+    window.addEventListener("blur", () => toggleEditPageShortcut(false));
+
+    const setPreviewMode = (mode) => {
+      const mobile = mode === "mobile";
+      editor?.classList.toggle("is-mobile-preview", mobile);
+      previewModeButtons.forEach((button) => {
+        const active = button.dataset.previewMode === mode;
+        button.classList.toggle("is-active", active);
+        button.setAttribute("aria-selected", active.toString());
+      });
+      window.sessionStorage.setItem(previewModeStorageKey, mode);
+    };
+
+    const reloadPreview = () => {
+      if (!previewFrame) return;
+
+      const previewUrl = new URL(previewFrame.src, window.location.href);
+      previewUrl.searchParams.set("previewed_at", Date.now().toString());
+      previewFrame.src = previewUrl.toString();
+    };
+
+    const scrollPreviewTo = (componentIndex) => {
+      previewFrame?.contentWindow?.postMessage({ type: "journeybook:scroll-preview", componentIndex }, window.location.origin);
+    };
+
+    const saveForm = async (form) => {
+      const requestId = ++saveRequest;
+      const response = await fetch(form.action, {
+        method: form.method.toUpperCase(),
+        body: new FormData(form),
+        credentials: "same-origin",
+        headers: {
+          "Accept": "text/html",
+          "X-CSRF-Token": csrfToken
+        }
+      });
+
+      if (response.ok && requestId === saveRequest) reloadPreview();
+    };
+
+    const scheduleFormSave = (form) => {
+      if (!form) return;
+
+      window.clearTimeout(saveTimer);
+      saveTimer = window.setTimeout(() => saveForm(form).catch(() => {}), debounceDelay);
+    };
+
+    const scheduleSave = (event) => {
+      if (event.target.type === "hidden") return;
+      scheduleFormSave(event.target.form);
+    };
+
+    const updateImagePickerTrigger = (trigger, imageUrl, imageTitle) => {
+      const preview = trigger.querySelector(".jb-image-picker-preview");
+      if (preview) preview.remove();
+
+      const image = document.createElement("img");
+      image.src = imageUrl;
+      image.alt = "";
+      image.className = "jb-image-picker-preview";
+      trigger.prepend(image);
+      trigger.querySelector("[data-image-picker-label]").textContent = imageTitle || "Change image";
+    };
+
+    const setupUrlEditor = (editor) => {
+      const kind = editor.querySelector("[data-url-kind]");
+      const value = editor.querySelector("[data-url-value]");
+      const page = editor.querySelector("[data-url-page]");
+      const external = editor.querySelector("[data-url-external-input]");
+      const internalField = editor.querySelector("[data-url-internal]");
+      const externalField = editor.querySelector("[data-url-external]");
+      const sync = () => {
+        const internal = kind.value === "internal";
+        internalField.hidden = !internal;
+        externalField.hidden = internal;
+        value.value = internal ? page.value : external.value;
+        scheduleFormSave(editor.closest("form"));
+      };
+
+      kind.addEventListener("change", sync);
+      page.addEventListener("change", sync);
+      external.addEventListener("input", sync);
+      sync();
+    };
+
+    document.addEventListener("click", (event) => {
+      const open = event.target.closest("[data-image-picker-open]");
+      if (open && imagePickerModal) {
+        imagePickerTarget = open.parentElement.querySelector("input[type='hidden']");
+        imagePickerModal.showModal();
+        return;
+      }
+
+      if (event.target.closest("[data-image-picker-close]")) imagePickerModal?.close();
+
+      const asset = event.target.closest("[data-image-picker-asset]");
+      if (!asset || !imagePickerTarget) return;
+
+      imagePickerTarget.value = asset.dataset.imageUrl;
+      updateImagePickerTrigger(imagePickerTarget.nextElementSibling, asset.dataset.imageUrl, asset.dataset.imageTitle);
+      imagePickerTarget.dispatchEvent(new Event("input", { bubbles: true }));
+      scheduleFormSave(imagePickerTarget.form);
+      imagePickerModal.close();
+    });
+
+    const setupCollection = (collection) => {
+      const items = collection.querySelector("[data-collection-items]");
+      const input = collection.querySelector("[data-collection-input]");
+      const addButton = collection.querySelector("[data-collection-add]");
+      const min = Number(collection.dataset.collectionMin || 0);
+      const max = collection.dataset.collectionMax ? Number(collection.dataset.collectionMax) : Infinity;
+      const schema = JSON.parse(collection.dataset.collectionSchema);
+      const pages = JSON.parse(collection.dataset.collectionPages || "[]");
+      let draggedItem;
+
+      const collectionItems = () => [...items.querySelectorAll(":scope > [data-collection-item]")];
+      const syncIconEditor = (editor) => {
+        if (editor.querySelector("[data-icon-mode]").value !== "icon") return;
+        const identifier = editor.querySelector("[data-icon-identifier]").value.trim();
+        if (!identifier) return;
+        editor.parentElement.querySelector("[data-collection-field]").value = `icon:${editor.querySelector("[data-icon-style]").value}:${editor.querySelector("[data-icon-color]").value}:${identifier}`;
+      };
+      const syncUrlEditor = (editor) => {
+        const internal = editor.querySelector("[data-url-kind]").value === "internal";
+        editor.querySelector("[data-url-internal]").hidden = !internal;
+        editor.querySelector("[data-url-external]").hidden = internal;
+        editor.querySelector("[data-url-value]").value = internal ? editor.querySelector("[data-url-page]").value : editor.querySelector("[data-url-external-input]").value;
+      };
+      const sync = () => {
+        input.value = JSON.stringify(collectionItems().map((item) => Object.fromEntries(
+          [...item.querySelectorAll("[data-collection-field]")].map((field) => [field.dataset.collectionKey, field.value])
+        )));
+        addButton.disabled = collectionItems().length >= max;
+        collectionItems().forEach((item) => {
+          item.querySelector("[data-collection-remove]").disabled = collectionItems().length <= min;
+        });
+      };
+      const notify = () => collection.querySelector("[data-collection-field]")?.dispatchEvent(new Event("input", { bubbles: true }));
+      const addItem = (values = {}) => {
+        const item = document.createElement("fieldset");
+        item.className = "jb-collection-item";
+        item.dataset.collectionItem = "";
+        item.draggable = true;
+
+        const legend = document.createElement("legend");
+        legend.textContent = addButton.textContent.replace("Add ", "");
+        item.append(legend);
+
+        const handle = document.createElement("span");
+        handle.className = "jb-drag-handle";
+        handle.innerHTML = '<svg viewBox="0 0 12 18" aria-hidden="true"><circle cx="3" cy="3" r="1.25"/><circle cx="9" cy="3" r="1.25"/><circle cx="3" cy="9" r="1.25"/><circle cx="9" cy="9" r="1.25"/><circle cx="3" cy="15" r="1.25"/><circle cx="9" cy="15" r="1.25"/></svg>';
+        item.append(handle);
+
+        const fields = document.createElement("div");
+        fields.className = "jb-collection-fields";
+        Object.entries(schema).forEach(([key, prop]) => {
+          const label = document.createElement("label");
+          label.textContent = prop.label;
+          if (prop.type === "url") {
+            const field = document.createElement("input");
+            field.type = "hidden";
+            field.value = values[key] || "";
+            field.dataset.collectionField = "";
+            field.dataset.collectionKey = key;
+            field.dataset.urlValue = "";
+
+            const editor = document.createElement("div");
+            editor.className = "jb-url-editor";
+            editor.dataset.collectionUrlEditor = "";
+            editor.append(field);
+            const kind = document.createElement("select");
+            kind.dataset.urlKind = "";
+            kind.add(new Option("Journeybook page", "internal"));
+            kind.add(new Option("External URL", "external"));
+            const internal = document.createElement("select");
+            internal.dataset.urlPage = "";
+            internal.dataset.urlInternal = "";
+            internal.add(new Option("Select a page", ""));
+            pages.forEach((page) => internal.add(new Option(`${page.title} (${page.path})`, page.value)));
+            const external = document.createElement("input");
+            external.type = "text";
+            external.placeholder = "https://example.com";
+            external.dataset.urlExternal = "";
+            external.dataset.urlExternalInput = "";
+            const target = document.createElement("select");
+            target.dataset.collectionField = "";
+            target.dataset.collectionKey = `${key}_target`;
+            target.dataset.urlTarget = "";
+            target.add(new Option("Current window", "same_window"));
+            target.add(new Option("New window", "open_new_window"));
+            editor.append(kind, internal, external, target);
+            label.append(editor);
+            fields.append(label);
+            return;
+          }
+          const field = prop.type === "long_text" ? document.createElement("textarea") : prop.type === "select" ? document.createElement("select") : document.createElement("input");
+          field.dataset.collectionField = "";
+          field.dataset.collectionKey = key;
+          if (field.tagName === "SELECT") {
+            prop.options.forEach((option) => field.add(new Option(option, option)));
+          }
+          field.value = values[key] || prop.options?.[0] || "";
+          if (field.tagName === "TEXTAREA") field.rows = 3;
+          else field.type = prop.type === "image" ? "hidden" : "text";
+          label.append(field);
+          if (prop.type === "image" && imagePickerModal) {
+            const picker = document.createElement("button");
+            picker.type = "button";
+            picker.className = "jb-image-picker-trigger";
+            picker.dataset.imagePickerOpen = "";
+            picker.innerHTML = '<span data-image-picker-label>Select image</span>';
+            label.append(picker);
+          }
+          if (prop.type === "image" && prop.icons) {
+            const iconEditor = document.createElement("div");
+            iconEditor.className = "jb-icon-editor";
+            iconEditor.dataset.iconEditor = "";
+            iconEditor.innerHTML = '<select data-icon-mode><option value="image">Image</option><option value="icon">Font Awesome icon</option></select><input type="text" placeholder="user-cowboy" data-icon-identifier><select data-icon-style></select><select data-icon-color></select>';
+            prop.icons.styles.forEach((style) => iconEditor.querySelector("[data-icon-style]").add(new Option(style, style)));
+            prop.icons.colors.forEach((color) => iconEditor.querySelector("[data-icon-color]").add(new Option(color, color)));
+            label.append(iconEditor);
+          }
+          fields.append(label);
+        });
+        item.append(fields);
+
+        const remove = document.createElement("button");
+        remove.type = "button";
+        remove.className = "jb-collection-remove";
+        remove.dataset.collectionRemove = "";
+        remove.textContent = "×";
+        remove.title = "Remove";
+        remove.setAttribute("aria-label", "Remove item");
+        item.append(remove);
+        item.querySelectorAll("[data-collection-url-editor]").forEach(syncUrlEditor);
+        items.append(item);
+      };
+
+      addButton.addEventListener("click", () => {
+        if (collectionItems().length >= max) return;
+        addItem();
+        sync();
+        notify();
+      });
+      items.addEventListener("input", (event) => {
+        const urlEditor = event.target.closest("[data-collection-url-editor]");
+        if (urlEditor) syncUrlEditor(urlEditor);
+        const iconEditor = event.target.closest("[data-icon-editor]");
+        if (iconEditor) syncIconEditor(iconEditor);
+        sync();
+      });
+      items.addEventListener("change", (event) => {
+        const urlEditor = event.target.closest("[data-collection-url-editor]");
+        if (!urlEditor) return;
+        syncUrlEditor(urlEditor);
+        sync();
+      });
+      items.addEventListener("click", (event) => {
+        const remove = event.target.closest("[data-collection-remove]");
+        if (!remove || collectionItems().length <= min) return;
+        if (!window.confirm("Remove this item?")) return;
+        remove.closest("[data-collection-item]").remove();
+        sync();
+        notify();
+      });
+      items.addEventListener("dragstart", (event) => {
+        draggedItem = event.target.closest("[data-collection-item]");
+        if (!draggedItem) return;
+        event.dataTransfer.setData("text/plain", "collection-item");
+      });
+      items.addEventListener("dragover", (event) => {
+        if (!draggedItem) return;
+        event.preventDefault();
+        const target = event.target.closest("[data-collection-item]");
+        if (!target || target === draggedItem) return;
+        target[event.clientY > target.getBoundingClientRect().top + target.offsetHeight / 2 ? "after" : "before"](draggedItem);
+      });
+      items.addEventListener("dragend", () => {
+        if (!draggedItem) return;
+        draggedItem = undefined;
+        sync();
+        notify();
+      });
+      items.querySelectorAll("[data-collection-url-editor]").forEach(syncUrlEditor);
+      items.querySelectorAll("[data-icon-editor]").forEach(syncIconEditor);
+      sync();
+    };
+
+    forms.forEach((form) => {
+      form.addEventListener("input", scheduleSave);
+      form.addEventListener("change", scheduleSave);
+    });
+
+    previewModeButtons.forEach((button) => {
+      button.addEventListener("click", () => setPreviewMode(button.dataset.previewMode));
+    });
+
+    previewComponents.forEach((component) => {
+      const scrollToComponent = () => scrollPreviewTo(Number(component.dataset.previewComponentIndex));
+      component.addEventListener("mouseenter", scrollToComponent);
+      component.addEventListener("focusin", scrollToComponent);
+    });
+
+    document.querySelectorAll("[data-collection]").forEach(setupCollection);
+    document.querySelectorAll("[data-url-editor]").forEach(setupUrlEditor);
+
+    setPreviewMode(window.sessionStorage.getItem(previewModeStorageKey) || "desktop");
+  })();
+<% end %>

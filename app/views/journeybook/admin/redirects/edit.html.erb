@@ -1,0 +1,2 @@
+<header class="jb-header"><div><p class="jb-eyebrow">Redirects</p><h1 class="jb-title">Edit redirect</h1></div><%= button_to "Delete redirect", admin_redirect_path(@redirect), method: :delete, class: "jb-button jb-button-danger", data: { turbo_confirm: "Delete this redirect?" } %></header>
+<%= render "form", redirect: @redirect %>

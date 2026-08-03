@@ -1,0 +1,23 @@
+<% content_for :title, "Edit source: #{@page.title}" %>
+
+<header class="jb-header">
+  <div>
+    <p class="jb-eyebrow">Page source</p>
+    <h1 class="jb-title"><%= @page.title %></h1>
+    <p class="jb-subtitle">Edit the complete Markdown source for this page.</p>
+  </div>
+  <%= link_to "Back to editor", edit_admin_page_path(@page, site_id: @page.site_id, tab: "layout"), class: "jb-button jb-button-secondary" %>
+</header>
+
+<%= form_with model: [:admin, @page], url: source_admin_page_path(@page, site_id: @page.site_id), method: :patch, class: "jb-form jb-source-editor" do |form| %>
+  <%= render "journeybook/admin/shared/errors", record: @page %>
+
+  <div class="jb-field jb-markdown">
+    <%= form.label :markdown, "Markdown source" %>
+    <%= form.text_area :markdown, required: true, spellcheck: false, autofocus: true %>
+  </div>
+
+  <div class="jb-actions">
+    <%= form.submit "Save source", class: "jb-button" %>
+  </div>
+<% end %>

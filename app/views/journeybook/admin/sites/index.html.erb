@@ -1,0 +1,26 @@
+<header class="jb-header">
+  <div>
+    <p class="jb-eyebrow">Sites</p>
+    <h1 class="jb-title">Sites</h1>
+  </div>
+  <%= link_to "New site", new_admin_site_path, class: "jb-button" %>
+</header>
+
+<section class="jb-card jb-card-flush">
+  <table class="jb-table">
+    <thead><tr><th>Name</th><th>Key</th><th>Host</th><th>Prefix</th><th>Layout</th><th>Locale</th><th></th></tr></thead>
+    <tbody>
+      <% @sites.each do |site| %>
+        <tr>
+          <td><strong><%= site.name %></strong></td>
+          <td><code><%= site.key %></code></td>
+          <td><code><%= site.host %></code></td>
+          <td><code><%= site.path_prefix %></code></td>
+          <td><code><%= site.layout_name %></code></td>
+          <td><%= site.default_locale %></td>
+          <td><div class="jb-actions"><%= link_to "Edit", edit_admin_site_path(site), class: "jb-button jb-button-secondary" %></div></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</section>

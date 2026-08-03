@@ -1,0 +1,2 @@
+<header class="jb-header"><div><p class="jb-eyebrow"><%= @menu.title %></p><h1 class="jb-title">Edit menu item</h1></div><%= button_to "Delete item", admin_navigation_menu_navigation_item_path(@menu, @item), method: :delete, class: "jb-button jb-button-danger", data: { turbo_confirm: "Delete this item?" } %></header>
+<%= render "form", menu: @menu, item: @item, pages: @pages %>

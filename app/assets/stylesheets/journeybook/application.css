@@ -1,0 +1,1556 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or any plugin's vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any other CSS/SCSS
+ * files in this directory. Styles in this file should be added after the last require_* statement.
+ * It is generally better to create a new file per style scope.
+ *
+ *= require_tree .
+ *= require_self
+ */
+
+/* ===================================================================
+   JOURNEYBOOK ADMIN — DESIGN SYSTEM
+   Light, professional, extendable.
+   Override any --jb-* custom property in your host app to customise.
+   =================================================================== */
+
+/* ---- 1. TOKENS ---------------------------------------------------- */
+
+:root {
+  color-scheme: light;
+
+  /* Surfaces */
+  --jb-bg:        #f8fafc;   /* page chrome */
+  --jb-surface:   #ffffff;   /* card / panel */
+  --jb-surface-2: #f1f5f9;   /* subtle alternate surface, hover fill */
+
+  /* Borders */
+  --jb-border:    #e2e8f0;   /* default border */
+  --jb-border-2:  #cbd5e1;   /* stronger border, focus ring */
+
+  /* Text */
+  --jb-text:      #0f172a;   /* primary */
+  --jb-text-2:    #475569;   /* secondary / labels */
+  --jb-text-3:    #94a3b8;   /* muted / placeholders */
+
+  /* Accent — primary action colour */
+  --jb-accent:       #0f172a;
+  --jb-accent-hover: #1e293b;
+
+  /* Semantic */
+  --jb-danger:          #dc2626;
+  --jb-danger-bg:       #fef2f2;
+  --jb-danger-border:   #fca5a5;
+  --jb-success:         #16a34a;
+  --jb-success-bg:      #f0fdf4;
+  --jb-success-border:  #86efac;
+  --jb-warning:         #b45309;
+  --jb-warning-bg:      #fffbeb;
+  --jb-warning-border:  #fde68a;
+
+  /* Elevation */
+  --jb-shadow-xs: 0 1px 2px rgba(0, 0, 0, .05);
+  --jb-shadow-sm: 0 1px 3px rgba(0, 0, 0, .08), 0 1px 2px -1px rgba(0, 0, 0, .06);
+
+  /* Shape */
+  --jb-radius:    0.5rem;
+  --jb-radius-sm: 0.375rem;
+  --jb-radius-lg: 0.75rem;
+
+  /* Layout */
+  --jb-sidebar-w: 15rem;
+  --jb-main-max:  1200px;
+  --jb-editor-topbar-h: 3.25rem;
+}
+
+/* ---- 2. RESET & BASE ---------------------------------------------- */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--jb-bg);
+  color: var(--jb-text);
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; }
+
+code {
+  background: var(--jb-surface-2);
+  border: 1px solid var(--jb-border);
+  border-radius: 0.25rem;
+  color: var(--jb-text-2);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.8125rem;
+  padding: 0.1em 0.35em;
+}
+
+/* ---- 3. SHELL ----------------------------------------------------- */
+
+.jb-shell {
+  display: grid;
+  grid-template-columns: var(--jb-sidebar-w) 1fr;
+  min-height: 100vh;
+}
+
+/* ---- 4. SIDEBAR --------------------------------------------------- */
+
+.jb-sidebar {
+  background: var(--jb-surface);
+  border-right: 1px solid var(--jb-border);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 1.25rem 0.875rem;
+  position: sticky;
+  top: 0;
+}
+
+.jb-brand {
+  align-items: center;
+  color: var(--jb-text);
+  display: flex;
+  font-size: 0.875rem;
+  font-weight: 600;
+  gap: 0.5rem;
+  letter-spacing: -0.01em;
+  margin-bottom: 1.25rem;
+  padding: 0 0.25rem;
+  text-decoration: none;
+}
+
+.jb-brand-logo {
+  border-radius: 0.45rem;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, .16);
+  flex-shrink: 0;
+  height: 2rem;
+  width: 2rem;
+}
+
+/* ---- 5. NAVIGATION ------------------------------------------------ */
+
+.jb-nav {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.jb-nav a {
+  border-radius: var(--jb-radius-sm);
+  color: var(--jb-text-2);
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.45rem 0.625rem;
+  text-decoration: none;
+  transition: background 0.1s, color 0.1s;
+}
+
+.jb-nav a:hover {
+  background: var(--jb-surface-2);
+  color: var(--jb-text);
+}
+
+.jb-nav a.is-active {
+  background: var(--jb-surface-2);
+  color: var(--jb-text);
+  font-weight: 600;
+}
+
+/* ---- 6. SITE SWITCHER --------------------------------------------- */
+
+.jb-context {
+  border-top: 1px solid var(--jb-border);
+  display: grid;
+  gap: 0.375rem;
+  margin-top: auto;
+  padding-top: 1rem;
+}
+
+.jb-context label {
+  color: var(--jb-text-3);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.jb-context select {
+  appearance: none;
+  background: var(--jb-surface-2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 0.5rem center;
+  border: 1px solid var(--jb-border);
+  border-radius: var(--jb-radius-sm);
+  color: var(--jb-text);
+  font: inherit;
+  padding: 0.45rem 2rem 0.45rem 0.5rem;
+  width: 100%;
+}
+
+.jb-context select:focus {
+  border-color: var(--jb-border-2);
+  outline: 2px solid rgba(15, 23, 42, .1);
+  outline-offset: -1px;
+}
+
+/* ---- 7. MAIN CONTENT ---------------------------------------------- */
+
+.jb-main {
+  margin: 0 auto;
+  max-width: var(--jb-main-max);
+  padding: 2rem;
+  width: 100%;
+}
+
+.jb-main-wide { max-width: none; }
+
+/* ---- 8. PAGE HEADER ----------------------------------------------- */
+
+.jb-header {
+  align-items: flex-start;
+  border-bottom: 1px solid var(--jb-border);
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.25rem;
+}
+
+.jb-eyebrow {
+  color: var(--jb-text-3);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  margin: 0 0 0.3rem;
+  text-transform: uppercase;
+}
+
+.jb-title {
+  font-size: clamp(1.35rem, 2vw, 1.875rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.jb-subtitle {
+  color: var(--jb-text-2);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  margin: 0.4rem 0 0;
+  max-width: 48rem;
+}
+
+/* ---- 9. SPACING UTILITIES ----------------------------------------- */
+
+.jb-section    { margin-top: 1.25rem; }
+.jb-section-lg { margin-top: 2rem; }
+
+/* ---- 10. GRIDS ---------------------------------------------------- */
+
+.jb-grid   { display: grid; gap: 0.875rem; }
+.jb-grid-2 { grid-template-columns: minmax(0, 1fr) minmax(18rem, 22rem); }
+.jb-grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+.jb-ai-layout {
+  align-items: start;
+  gap: 1.25rem;
+}
+
+/* ---- 11. CARDS ---------------------------------------------------- */
+
+.jb-card {
+  background: var(--jb-surface);
+  border: 1px solid var(--jb-border);
+  border-radius: var(--jb-radius-lg);
+  box-shadow: var(--jb-shadow-xs);
+  padding: 1.25rem;
+}
+
+/* Flush card — no padding; use for edge-to-edge tables */
+.jb-card-flush {
+  overflow: hidden;
+  padding: 0;
+}
+
+/* Card-level header is tighter than the page-level header */
+.jb-card .jb-header {
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+}
+
+.jb-card-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.jb-ai-card { gap: 1.125rem; }
+.jb-ai-fields { gap: 0.75rem 0.875rem; }
+
+.jb-reference {
+  align-self: start;
+  padding: 1rem;
+}
+
+.jb-reference .jb-subtitle { margin-top: 0.25rem; }
+
+.jb-reference-list {
+  gap: 0.625rem;
+  margin-top: 0.875rem;
+}
+
+.jb-reference .jb-component {
+  gap: 0.5rem;
+  padding: 0.875rem;
+}
+
+.jb-reference-stack {
+  align-self: start;
+  display: grid;
+  gap: 0.875rem;
+}
+
+.jb-page-editor-layout {
+  align-items: start;
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, 24rem);
+}
+
+.jb-page-editor-card {
+  gap: 1.25rem;
+}
+
+.jb-page-editor-layout .jb-reference-stack {
+  position: sticky;
+  top: 2rem;
+}
+
+/* ---- 12. STAT CARDS ----------------------------------------------- */
+
+.jb-stat {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.jb-stat strong {
+  color: var(--jb-text);
+  display: block;
+  font-size: 1.875rem;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.jb-stat-label {
+  color: var(--jb-text-2);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+/* ---- 13. DATA TABLE ----------------------------------------------- */
+
+.jb-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.jb-table th,
+.jb-table td {
+  border-bottom: 1px solid var(--jb-border);
+  padding: 0.75rem 1.25rem;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.jb-table th {
+  color: var(--jb-text-3);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.jb-table td            { color: var(--jb-text); font-size: 0.875rem; }
+.jb-table tbody tr:last-child td { border-bottom: none; }
+.jb-table tbody tr:hover td      { background: var(--jb-surface-2); }
+
+/* ---- 14. FORMS ---------------------------------------------------- */
+
+.jb-form   { display: grid; gap: 1rem; }
+.jb-fields { display: grid; gap: 0.875rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.jb-field  { display: grid; gap: 0.375rem; }
+
+.jb-field label {
+  color: var(--jb-text-2);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.jb-field input,
+.jb-field select,
+.jb-field textarea {
+  appearance: none;
+  background: var(--jb-surface);
+  border: 1px solid var(--jb-border);
+  border-radius: var(--jb-radius-sm);
+  color: var(--jb-text);
+  font: inherit;
+  font-size: 0.875rem;
+  padding: 0.5625rem 0.75rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  width: 100%;
+}
+
+.jb-field input::placeholder,
+.jb-field textarea::placeholder { color: var(--jb-text-3); }
+
+.jb-field input:focus,
+.jb-field select:focus,
+.jb-field textarea:focus {
+  border-color: var(--jb-border-2);
+  box-shadow: 0 0 0 3px rgba(15, 23, 42, .08);
+  outline: none;
+}
+
+.jb-field select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-position: right 0.625rem center;
+  background-repeat: no-repeat;
+  padding-right: 2rem;
+}
+
+.jb-field textarea           { min-height: 10rem; resize: vertical; }
+.jb-field-short textarea     { min-height: 7rem; }   /* meta description */
+.jb-prompt textarea          { min-height: 10rem; }  /* AI prompt */
+
+.jb-checkbox-field {
+  align-items: center;
+  color: var(--jb-text-2);
+  display: inline-flex;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  gap: 0.5rem;
+}
+
+.jb-checkbox-field input { accent-color: var(--jb-accent); height: 1rem; width: 1rem; }
+
+.jb-markdown textarea {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+}
+
+.jb-source-editor textarea {
+  min-height: calc(100vh - 16rem);
+  resize: vertical;
+}
+
+.jb-help {
+  color: var(--jb-text-3);
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+/* ---- 15. ACTIONS & BUTTONS ---------------------------------------- */
+
+.jb-actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.jb-button,
+.jb-link-button,
+input[type="submit"].jb-button,
+button.jb-button {
+  align-items: center;
+  appearance: none;
+  background: var(--jb-accent);
+  border: 1px solid var(--jb-accent);
+  border-radius: var(--jb-radius-sm);
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  gap: 0.375rem;
+  line-height: 1;
+  padding: 0.5625rem 0.875rem;
+  text-decoration: none;
+  transition: background 0.1s, border-color 0.1s;
+  white-space: nowrap;
+}
+
+.jb-button:hover,
+.jb-link-button:hover,
+input[type="submit"].jb-button:hover,
+button.jb-button:hover {
+  background: var(--jb-accent-hover);
+  border-color: var(--jb-accent-hover);
+}
+
+.jb-button-secondary {
+  background: var(--jb-surface);
+  border-color: var(--jb-border);
+  color: var(--jb-text);
+}
+
+.jb-button-secondary:hover {
+  background: var(--jb-surface-2);
+  border-color: var(--jb-border-2);
+  color: var(--jb-text);
+}
+
+.jb-button-danger {
+  background: var(--jb-surface);
+  border-color: var(--jb-danger-border);
+  color: var(--jb-danger);
+}
+
+.jb-button-danger:hover {
+  background: var(--jb-danger-bg);
+  border-color: var(--jb-danger);
+}
+
+/* ---- 16. BADGES --------------------------------------------------- */
+
+.jb-badge {
+  background: var(--jb-surface-2);
+  border: 1px solid var(--jb-border);
+  border-radius: 0.3rem;
+  color: var(--jb-text-2);
+  display: inline-flex;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  line-height: 1;
+  padding: 0.25rem 0.5rem;
+  white-space: nowrap;
+}
+
+.jb-badge-published {
+  background: var(--jb-success-bg);
+  border-color: var(--jb-success-border);
+  color: var(--jb-success);
+}
+
+.jb-badge-draft {
+  background: var(--jb-warning-bg);
+  border-color: var(--jb-warning-border);
+  color: var(--jb-warning);
+}
+
+/* ---- 17. FLASH MESSAGES ------------------------------------------- */
+
+.jb-notice,
+.jb-alert {
+  backdrop-filter: blur(12px);
+  border-radius: var(--jb-radius);
+  box-shadow: var(--jb-shadow-sm);
+  font-size: 0.875rem;
+  margin: 0;
+  padding: 0.625rem 0.875rem;
+}
+
+.jb-flashes {
+  display: grid;
+  gap: 0.5rem;
+  max-width: min(22rem, calc(100vw - 2rem));
+  pointer-events: none;
+  position: fixed;
+  right: 1.25rem;
+  top: 1.25rem;
+  z-index: 100;
+}
+
+.jb-flashes > * { pointer-events: auto; }
+
+.jb-notice {
+  background: color-mix(in srgb, var(--jb-success-bg) 88%, transparent);
+  border: 1px solid color-mix(in srgb, var(--jb-success-border) 72%, transparent);
+  color: var(--jb-success);
+}
+
+.jb-alert {
+  background: color-mix(in srgb, var(--jb-danger-bg) 88%, transparent);
+  border: 1px solid color-mix(in srgb, var(--jb-danger-border) 72%, transparent);
+  color: var(--jb-danger);
+}
+
+/* ---- 18. FORM ERRORS ---------------------------------------------- */
+
+.jb-errors {
+  background: var(--jb-danger-bg);
+  border: 1px solid var(--jb-danger-border);
+  border-radius: var(--jb-radius);
+  color: var(--jb-danger);
+  font-size: 0.875rem;
+  padding: 0.875rem 1rem;
+}
+
+.jb-errors ul { margin: 0.375rem 0 0; padding-left: 1.25rem; }
+.jb-errors li { margin: 0.125rem 0; }
+
+/* ---- 19. COMPONENT LIBRARY ---------------------------------------- */
+
+.jb-component { display: grid; gap: 0.625rem; }
+
+.jb-component-library {
+  align-items: start;
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 18rem minmax(0, 1fr);
+}
+
+.jb-component-picker {
+  align-self: start;
+  position: sticky;
+  top: 2rem;
+}
+
+.jb-component-nav {
+  display: grid;
+  gap: 0.375rem;
+  margin-top: 0.875rem;
+}
+
+.jb-component-search {
+  color: var(--jb-text-2);
+  display: grid;
+  font-size: 0.75rem;
+  font-weight: 600;
+  gap: 0.25rem;
+  margin-top: 0.875rem;
+}
+
+.jb-component-search input {
+  background: var(--jb-surface);
+  border: 1px solid var(--jb-border);
+  border-radius: var(--jb-radius-sm);
+  color: var(--jb-text);
+  font: inherit;
+  padding: 0.5rem 0.625rem;
+}
+
+.jb-component-nav-item {
+  align-items: stretch;
+  display: flex;
+  gap: 0.375rem;
+}
+
+.jb-component-nav-item > a {
+  flex: 1;
+}
+
+.jb-component-nav-item form {
+  display: flex;
+}
+
+.jb-component-nav a {
+  border: 1px solid transparent;
+  border-radius: var(--jb-radius-sm);
+  color: var(--jb-text-2);
+  display: grid;
+  gap: 0.125rem;
+  padding: 0.625rem;
+  text-decoration: none;
+}
+
+.jb-component-nav a[hidden] {
+  display: none;
+}
+
+.jb-component-nav-item[hidden] {
+  display: none;
+}
+
+.jb-component-add-button {
+  align-items: center;
+  background: var(--jb-surface);
+  border: 1px solid var(--jb-border);
+  border-radius: var(--jb-radius-sm);
+  color: var(--jb-text-2);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 1.25rem;
+  height: 100%;
+  justify-content: center;
+  line-height: 1;
+  padding: 0;
+  width: 2.25rem;
+}
+
+.jb-component-add-button:hover {
+  background: var(--jb-accent);
+  border-color: var(--jb-accent);
+  color: #ffffff;
+}
+
+.jb-component-nav a:hover,
+.jb-component-nav a.is-active {
+  background: var(--jb-surface-2);
+  border-color: var(--jb-border);
+  color: var(--jb-text);
+}
+
+.jb-component-nav strong {
+  color: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.jb-component-nav span {
+  color: var(--jb-text-2);
+  display: -webkit-box;
+  font-size: 0.75rem;
+  line-clamp: 2;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.jb-component-preview-card .jb-header { align-items: center; }
+
+.jb-component-preview {
+  border: 0;
+  min-height: clamp(34rem, 72vh, 56rem);
+  width: 100%;
+}
+
+.jb-component-add-page {
+  align-items: start;
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 20rem minmax(0, 1fr);
+}
+
+.jb-component-add-sidebar-footer,
+.jb-component-add-footer {
+  border-top: 1px solid var(--jb-border);
+  margin-top: 1rem;
+  padding-top: 1rem;
+}
+
+.jb-component-add-preview {
+  display: grid;
+  gap: 1rem;
+}
+
+.jb-component-add-preview-frame {
+  border: 0;
+  min-height: clamp(34rem, 70vh, 54rem);
+  width: 100%;
+}
+
+/* ---- PAGE EDITOR --------------------------------------------------- */
+
+.jb-editor-main {
+  margin: 0;
+  max-width: none;
+  padding: 0;
+}
+
+.jb-page-editor {
+  display: grid;
+  grid-template-columns: 22rem minmax(0, 1fr);
+  height: 100vh;
+  overflow: hidden;
+}
+
+.jb-editor-sidebar {
+  background: var(--jb-surface);
+  border-right: 1px solid var(--jb-border);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+  overflow-y: auto;
+}
+
+.jb-editor-pagebar,
+.jb-editor-preview-topbar {
+  align-items: center;
+  background: var(--jb-surface);
+  border-bottom: 1px solid var(--jb-border);
+  display: flex;
+  flex-shrink: 0;
+  height: var(--jb-editor-topbar-h);
+  padding: 0 0.75rem;
+}
+
+.jb-page-switcher {
+  position: relative;
+  width: 100%;
+}
+
+.jb-page-switcher summary {
+  align-items: center;
+  border-radius: var(--jb-radius-sm);
+  cursor: pointer;
+  display: flex;
+  font-size: 0.875rem;
+  font-weight: 700;
+  justify-content: space-between;
+  list-style: none;
+  min-width: 0;
+  padding: 0.5rem 0.625rem;
+}
+
+.jb-page-switcher summary::-webkit-details-marker { display: none; }
+
+.jb-page-switcher summary::after {
+  color: var(--jb-text-3);
+  content: "▼";
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  margin-left: 0.5rem;
+}
+
+.jb-page-switcher summary:hover {
+  background: var(--jb-surface-2);
+}
+
+.jb-page-switcher summary span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.jb-page-switcher-menu {
+  background: var(--jb-surface);
+  border: 1px solid var(--jb-border);
+  border-radius: var(--jb-radius);
+  box-shadow: var(--jb-shadow-sm);
+  display: grid;
+  gap: 0.25rem;
+  left: 0;
+  max-height: min(26rem, calc(100vh - 5rem));
+  overflow-y: auto;
+  padding: 0.375rem;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.375rem);
+  z-index: 10;
+}
+
+.jb-page-switcher-menu a {
+  border-radius: var(--jb-radius-sm);
+  color: var(--jb-text);
+  display: grid;
+  gap: 0.125rem;
+  padding: 0.5rem 0.625rem;
+  text-decoration: none;
+}
+
+.jb-page-switcher-menu a:hover,
+.jb-page-switcher-menu a.is-active {
+  background: var(--jb-surface-2);
+}
+
+.jb-page-switcher-menu strong {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.jb-page-switcher-menu span {
+  color: var(--jb-text-2);
+  font-size: 0.75rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.jb-editor-tabs {
+  background: var(--jb-surface);
+  border-bottom: 1px solid var(--jb-border);
+  display: grid;
+  gap: 0.375rem;
+  grid-template-columns: 1fr 1fr;
+  padding: 0.75rem;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.jb-editor-tabs a {
+  border-radius: var(--jb-radius-sm);
+  color: var(--jb-text-2);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0.5rem 0.625rem;
+  text-align: center;
+  text-decoration: none;
+}
+
+.jb-editor-tabs a:hover,
+.jb-editor-tabs a.is-active {
+  background: var(--jb-surface-2);
+  color: var(--jb-text);
+}
+
+.jb-editor-panel {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.jb-editor-panel-footer {
+  border-top: 1px solid var(--jb-border);
+  padding-top: 1rem;
+}
+
+.jb-editor-title,
+.jb-editor-subtitle {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.jb-editor-subtitle {
+  font-size: 0.9375rem;
+}
+
+.jb-component-instance-list {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.jb-component-instance {
+  align-items: start;
+  border: 1px solid var(--jb-border);
+  border-radius: var(--jb-radius-sm);
+  display: grid;
+  gap: 0.625rem;
+  grid-template-columns: auto 1fr;
+  padding: 0.625rem;
+}
+
+.jb-component-instance:hover {
+  background: var(--jb-surface-2);
+  border-color: var(--jb-border-2);
+}
+
+.jb-component-instance.is-hidden {
+  background: var(--jb-surface-2);
+  opacity: 0.65;
+}
+
+.jb-component-instance-main {
+  display: grid;
+  gap: 0.625rem;
+  min-width: 0;
+}
+
+.jb-component-instance-summary {
+  color: var(--jb-text);
+  display: grid;
+  gap: 0.125rem;
+}
+
+.jb-component-instance-list strong {
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.jb-component-instance-list span {
+  color: var(--jb-text-2);
+  display: -webkit-box;
+  font-size: 0.75rem;
+  line-clamp: 2;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.jb-component-instance-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+.jb-collection {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.jb-collection-items {
+  display: grid;
+  gap: 0.625rem;
+}
+
+.jb-collection-item {
+  align-items: start;
+  background: var(--jb-surface-2);
+  border: 1px solid var(--jb-border);
+  border-radius: var(--jb-radius-sm);
+  display: grid;
+  gap: 0.625rem;
+  grid-template-columns: auto 1fr auto;
+  margin: 0;
+  padding: 0.75rem;
+}
+
+.jb-collection-item legend {
+  color: var(--jb-text-2);
+  font-size: 0.75rem;
+  font-weight: 700;
+  grid-column: 1 / 3;
+  grid-row: 1;
+  padding: 0;
+}
+
+.jb-collection-remove {
+  align-items: center;
+  background: var(--jb-danger-bg);
+  border: 1px solid var(--jb-danger-border);
+  border-radius: 999px;
+  color: var(--jb-danger);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 1.125rem;
+  grid-column: 3;
+  grid-row: 1;
+  height: 1.5rem;
+  justify-content: center;
+  line-height: 1;
+  padding: 0;
+  width: 1.5rem;
+}
+
+.jb-collection-remove:hover {
+  background: var(--jb-danger);
+  border-color: var(--jb-danger);
+  color: var(--jb-surface);
+}
+
+.jb-collection-remove:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.jb-collection-fields {
+  display: grid;
+  gap: 0.625rem;
+  grid-column: 2 / -1;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+}
+
+.jb-collection-fields label {
+  color: var(--jb-text-2);
+  display: grid;
+  font-size: 0.75rem;
+  font-weight: 600;
+  gap: 0.25rem;
+}
+
+.jb-collection-fields input,
+.jb-collection-fields textarea {
+  background: var(--jb-surface);
+  border: 1px solid var(--jb-border);
+  border-radius: var(--jb-radius-sm);
+  color: var(--jb-text);
+  font: inherit;
+  padding: 0.5rem 0.625rem;
+  width: 100%;
+}
+
+.jb-drag-cell { width: 1%; }
+
+.jb-sortable-list {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.75rem;
+}
+
+.jb-sortable-item {
+  align-items: center;
+  background: var(--jb-surface);
+  border: 1px solid var(--jb-border);
+  border-radius: var(--jb-radius-sm);
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: auto 1fr auto;
+  padding: 0.75rem;
+}
+
+.jb-sortable-item:hover {
+  background: var(--jb-surface-2);
+  border-color: var(--jb-border-2);
+}
+
+.jb-sortable-item-body {
+  display: grid;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.jb-sortable-item-body strong {
+  font-size: 0.875rem;
+}
+
+.jb-sortable-item-body small {
+  color: var(--jb-text-3);
+  font-size: 0.75rem;
+}
+
+.jb-drag-handle {
+  align-items: center;
+  color: var(--jb-text-3);
+  cursor: grab;
+  display: inline-flex;
+  flex-shrink: 0;
+  height: 1.75rem;
+  justify-content: center;
+  touch-action: none;
+  user-select: none;
+  width: 1.25rem;
+}
+
+.jb-drag-handle:active { cursor: grabbing; }
+.jb-drag-handle svg { fill: currentColor; height: 1rem; width: 0.75rem; pointer-events: none; }
+[data-sortable-item].is-dragging {
+  opacity: 0.45;
+  outline: 1px dashed var(--jb-border-2);
+}
+
+.jb-component-instance-actions form {
+  display: inline-flex;
+}
+
+.jb-component-instance-actions .jb-link-button {
+  background: var(--jb-surface);
+  border-color: var(--jb-border);
+  color: var(--jb-text);
+}
+
+.jb-component-instance-actions .jb-link-button:hover {
+  background: var(--jb-surface-2);
+  border-color: var(--jb-border-2);
+}
+
+.jb-link-button-small {
+  font-size: 0.75rem;
+  padding: 0.375rem 0.5rem;
+}
+
+.jb-link-button-danger {
+  border-color: var(--jb-danger-border) !important;
+  color: var(--jb-danger) !important;
+  background: transparent !important;
+}
+
+.jb-link-button-danger:hover {
+  border-color: var(--jb-danger) !important;
+}
+
+.jb-link-button:disabled,
+.jb-link-button[disabled] {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.jb-component-editor {
+  gap: 1rem;
+}
+
+.jb-component-editor-actions {
+  background: var(--jb-surface);
+  border-top: 1px solid var(--jb-border);
+  bottom: 0;
+  margin: 0 -1rem -1rem;
+  padding: 1rem;
+  position: sticky;
+  z-index: 1;
+}
+
+.jb-component-editor-actions .jb-button {
+  flex: 1 1 0;
+  justify-content: center;
+}
+
+.jb-editor-back {
+  align-items: center;
+  color: var(--jb-text-2);
+  display: inline-flex;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.jb-editor-back:hover {
+  color: var(--jb-text);
+}
+
+.jb-editor-textarea-short {
+  min-height: 6rem;
+}
+
+.jb-url-editor {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.jb-url-editor label {
+  color: var(--jb-text-2);
+  display: grid;
+  font-size: 0.75rem;
+  font-weight: 600;
+  gap: 0.25rem;
+}
+
+.jb-icon-editor {
+  display: grid;
+  gap: 0.375rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 0.375rem;
+}
+
+.jb-icon-editor input,
+.jb-icon-editor select {
+  min-width: 0;
+}
+
+.jb-image-picker-trigger {
+  align-items: center;
+  background: var(--jb-surface);
+  border: 1px dashed var(--jb-border-2);
+  border-radius: var(--jb-radius-sm);
+  color: var(--jb-text);
+  cursor: pointer;
+  display: flex;
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  gap: 0.625rem;
+  min-height: 3rem;
+  padding: 0.375rem 0.625rem;
+  text-align: left;
+  width: 100%;
+}
+
+.jb-image-picker-trigger:hover {
+  background: var(--jb-surface-2);
+  border-color: var(--jb-accent);
+}
+
+.jb-image-picker-preview {
+  border-radius: calc(var(--jb-radius-sm) - 0.125rem);
+  height: 2.25rem;
+  object-fit: cover;
+  width: 3.5rem;
+}
+
+.jb-image-picker-modal {
+  background: var(--jb-surface);
+  border: 1px solid var(--jb-border);
+  border-radius: var(--jb-radius);
+  box-shadow: var(--jb-shadow-lg);
+  color: var(--jb-text);
+  margin: auto;
+  max-height: min(42rem, calc(100vh - 2rem));
+  max-width: 54rem;
+  padding: 0;
+  width: calc(100% - 2rem);
+}
+
+.jb-image-picker-modal::backdrop {
+  background: rgb(0 0 0 / 45%);
+}
+
+.jb-image-picker-modal-header,
+.jb-image-picker-modal-footer {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+}
+
+.jb-image-picker-modal-header {
+  border-bottom: 1px solid var(--jb-border);
+}
+
+.jb-image-picker-modal-header h2 {
+  font-size: 1rem;
+  margin: 0.125rem 0 0;
+}
+
+.jb-image-picker-close {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  color: var(--jb-text-2);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 1.5rem;
+  height: 2rem;
+  justify-content: center;
+  padding: 0;
+  width: 2rem;
+}
+
+.jb-image-picker-close:hover {
+  background: var(--jb-surface-2);
+  color: var(--jb-text);
+}
+
+.jb-image-picker-grid {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+  max-height: 30rem;
+  overflow-y: auto;
+  padding: 1.25rem;
+}
+
+.jb-image-picker-asset {
+  background: var(--jb-surface);
+  border: 1px solid var(--jb-border);
+  border-radius: var(--jb-radius-sm);
+  color: var(--jb-text);
+  cursor: pointer;
+  display: grid;
+  font: inherit;
+  gap: 0.5rem;
+  overflow: hidden;
+  padding: 0.5rem;
+  text-align: left;
+}
+
+.jb-image-picker-asset:hover {
+  background: var(--jb-surface-2);
+  border-color: var(--jb-accent);
+}
+
+.jb-image-picker-asset img {
+  aspect-ratio: 4 / 3;
+  border-radius: calc(var(--jb-radius-sm) - 0.125rem);
+  object-fit: cover;
+  width: 100%;
+}
+
+.jb-image-picker-asset span,
+.jb-image-picker-asset small {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.jb-image-picker-asset small {
+  color: var(--jb-text-2);
+  font-size: 0.6875rem;
+  margin-top: 0.125rem;
+}
+
+.jb-editor-preview {
+  background: var(--jb-bg);
+  display: grid;
+  grid-template-rows: var(--jb-editor-topbar-h) minmax(0, 1fr);
+  min-height: 0;
+  min-width: 0;
+}
+
+.jb-editor-preview-topbar {
+  position: relative;
+  justify-content: center;
+}
+
+.jb-edit-page-shortcut {
+  left: 0.75rem;
+  position: absolute;
+}
+
+.jb-edit-page-shortcut[hidden] {
+  display: none;
+}
+
+.jb-editor-preview-actions {
+  display: flex;
+  gap: 0.5rem;
+  position: absolute;
+  right: 0.75rem;
+}
+
+.jb-editor-preview-actions form {
+  margin: 0;
+}
+
+.jb-preview-tabs {
+  background: var(--jb-surface-2);
+  border: 1px solid var(--jb-border);
+  border-radius: var(--jb-radius-sm);
+  display: inline-grid;
+  gap: 0.125rem;
+  grid-template-columns: 1fr 1fr;
+  padding: 0.1875rem;
+}
+
+.jb-preview-tabs button {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  border-radius: calc(var(--jb-radius-sm) - 0.125rem);
+  color: var(--jb-text-2);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0.375rem 0.75rem;
+}
+
+.jb-preview-tabs button.is-active {
+  background: var(--jb-surface);
+  box-shadow: var(--jb-shadow-xs);
+  color: var(--jb-text);
+}
+
+.jb-editor-preview-stage {
+  display: flex;
+  min-height: 0;
+  overflow: auto;
+}
+
+.jb-editor-preview iframe {
+  border: 0;
+  display: block;
+  flex: 1;
+  height: 100%;
+  min-width: 0;
+  width: 100%;
+}
+
+.jb-page-editor.is-mobile-preview .jb-editor-preview-stage {
+  align-items: flex-start;
+  justify-content: center;
+  padding: 1.25rem;
+}
+
+.jb-page-editor.is-mobile-preview .jb-editor-preview iframe {
+  border: 1px solid var(--jb-border);
+  border-radius: 1.25rem;
+  box-shadow: 0 18px 44px rgba(15, 23, 42, .16);
+  flex: 0 0 auto;
+  max-width: 100%;
+  width: 390px;
+}
+
+.jb-code {
+  background: var(--jb-surface-2);
+  border: 1px solid var(--jb-border);
+  border-radius: var(--jb-radius-sm);
+  color: var(--jb-text-2);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.75rem;
+  overflow-x: auto;
+  padding: 0.625rem 0.875rem;
+  white-space: pre-wrap;
+}
+
+/* ---- 20. PAGE PREVIEW --------------------------------------------- */
+
+.jb-preview {
+  background: #ffffff;
+  border: 1px solid var(--jb-border);
+  border-radius: var(--jb-radius-lg);
+  color: #111827;
+  overflow: hidden;
+  padding: 1.5rem;
+}
+
+/* ---- 21. MEDIA LIBRARY -------------------------------------------- */
+
+.jb-media-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+}
+
+.jb-media-card {
+  display: grid;
+  gap: 1rem;
+  overflow: hidden;
+  padding: 0;
+}
+
+.jb-media-thumb {
+  aspect-ratio: 16 / 10;
+  background: var(--jb-surface-2);
+  border-bottom: 1px solid var(--jb-border);
+  display: block;
+  object-fit: cover;
+  width: 100%;
+}
+
+.jb-media-body {
+  display: grid;
+  gap: 0.625rem;
+  padding: 0 1rem 1rem;
+}
+
+.jb-media-body p { margin: 0; }
+
+.jb-media-snippets {
+  display: grid;
+  gap: 0.375rem;
+}
+
+.jb-media-snippets code,
+.jb-media-reference-item code {
+  overflow-wrap: anywhere;
+}
+
+.jb-media-reference-item {
+  border: 1px solid var(--jb-border);
+  border-radius: var(--jb-radius-sm);
+  display: grid;
+  gap: 0.375rem;
+  padding: 0.625rem;
+}
+
+.jb-media-reference-thumb {
+  aspect-ratio: 16 / 9;
+  background: var(--jb-surface-2);
+  border-radius: var(--jb-radius-sm);
+  display: block;
+  object-fit: cover;
+  width: 100%;
+}
+
+/* ---- 22. RESPONSIVE ----------------------------------------------- */
+
+@media (max-width: 960px) {
+  .jb-shell   { grid-template-columns: 1fr; }
+  .jb-sidebar { height: auto; overflow-y: visible; position: static; }
+  .jb-grid-2, .jb-grid-3, .jb-fields, .jb-component-library, .jb-component-add-page, .jb-page-editor-layout, .jb-page-editor { grid-template-columns: 1fr; }
+  .jb-component-picker, .jb-page-editor-layout .jb-reference-stack { position: static; }
+  .jb-header  { flex-direction: column; }
+  .jb-main    { padding: 1.25rem; }
+  .jb-editor-main { padding: 0; }
+  .jb-editor-preview iframe { height: 70vh; }
+}

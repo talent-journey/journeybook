@@ -1,0 +1,5 @@
+<svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Journeybook</title>
+  <rect width="160" height="160" rx="36" fill="#0F172A"/>
+  <path d="M52 30H118V95C118 118.196 99.196 137 76 137H69C47.461 137 30 119.539 30 98V91H59V98C59 103.523 63.477 108 69 108H76C83.18 108 89 102.18 89 95V59H52V30Z" fill="#F8FAFC"/>
+</svg>

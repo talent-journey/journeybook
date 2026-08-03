@@ -1,0 +1,10 @@
+<%= form_with model: [:admin, menu], class: "jb-form jb-card" do |form| %>
+  <%= render "journeybook/admin/shared/errors", record: menu %>
+  <div class="jb-fields">
+    <div class="jb-field"><%= form.label :title %><%= form.text_field :title, required: true, placeholder: "Footer: Product" %></div>
+    <div class="jb-field"><%= form.label :key, "Layout key" %><%= form.text_field :key, required: true, placeholder: "footer_product" %></div>
+    <div class="jb-field"><%= form.label :position %><%= form.number_field :position, min: 0 %></div>
+  </div>
+  <p class="jb-subtitle">The host layout renders a menu by its key. Use stable keys such as <code>header_learn</code> or <code>footer_product</code>.</p>
+  <div class="jb-actions"><%= form.submit class: "jb-button" %><%= link_to "Back", admin_navigation_menus_path, class: "jb-button jb-button-secondary" %></div>
+<% end %>

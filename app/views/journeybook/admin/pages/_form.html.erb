@@ -1,0 +1,77 @@
+<%= form_with model: [:admin, page], class: "jb-form" do |form| %>
+  <%= render "journeybook/admin/shared/errors", record: page %>
+  <%= hidden_field_tag :template_key, selected_template&.key %>
+  <%= form.hidden_field :markdown %>
+
+  <section class="jb-card jb-form jb-page-editor-card">
+    <% if selected_template %>
+      <p class="jb-help">Starting with the <strong><%= selected_template.name %></strong> template. Its component layout is ready to edit after this page is created.</p>
+    <% end %>
+    <div class="jb-fields">
+      <div class="jb-field">
+        <%= form.label :site_id %>
+        <%= form.collection_select :site_id, sites, :id, :name %>
+      </div>
+      <div class="jb-field">
+        <%= form.label :page_type %>
+        <%= form.select :page_type, Journeybook::Page::PAGE_TYPES %>
+      </div>
+      <div class="jb-field">
+        <%= form.label :status %>
+        <%= form.select :status, Journeybook::Page::STATUSES %>
+      </div>
+      <div class="jb-field">
+        <%= form.label :title %>
+        <%= form.text_field :title, required: true %>
+      </div>
+      <div class="jb-field">
+        <%= form.label :path %>
+        <%= form.text_field :path, required: selected_template&.path_prefix.blank?, placeholder: selected_template&.path_hint || "/about" %>
+        <% if selected_template&.path_prefix %>
+          <small class="jb-help">Leave blank to generate a path from the title.</small>
+        <% end %>
+      </div>
+      <div class="jb-field">
+        <%= form.label :author_name %>
+        <%= form.text_field :author_name, placeholder: "Optional author byline" %>
+      </div>
+      <div class="jb-field">
+        <%= form.label :topic %>
+        <%= form.text_field :topic, placeholder: "Optional topic, e.g. HR" %>
+      </div>
+      <div class="jb-field">
+        <%= form.label :position %>
+        <%= form.number_field :position, min: 0 %>
+      </div>
+      <div class="jb-field">
+        <%= form.label :locale %>
+        <%= form.text_field :locale, required: true %>
+      </div>
+      <div class="jb-field">
+        <%= form.label :meta_title %>
+        <%= form.text_field :meta_title %>
+      </div>
+      <div class="jb-field">
+        <%= form.label :published_at %>
+        <%= form.datetime_field :published_at %>
+        <small class="jb-help">Leave blank or use the Publish action to make the page live immediately. Future dates schedule the page.</small>
+      </div>
+    </div>
+
+    <div class="jb-field jb-field-short">
+      <%= form.label :excerpt %>
+      <%= form.text_area :excerpt %>
+      <small class="jb-help">Short summary for blog cards, RSS, and SEO.</small>
+    </div>
+
+    <div class="jb-field jb-field-short">
+      <%= form.label :meta_description %>
+      <%= form.text_area :meta_description %>
+    </div>
+
+    <div class="jb-actions">
+      <%= form.submit "Save page", class: "jb-button" %>
+      <%= link_to "Back", admin_pages_path, class: "jb-button jb-button-secondary" %>
+    </div>
+  </section>
+<% end %>

@@ -1,0 +1,17 @@
+<div class="jb-component jb-card">
+  <div>
+    <code>{{ <%= component.name %> }}</code>
+    <% if component.metadata[:description].present? %>
+      <p class="jb-subtitle"><%= component.metadata[:description] %></p>
+    <% end %>
+  </div>
+  <% props = component.normalized_props %>
+  <% if props.present? %>
+    <div>
+      <% props.each do |name, prop| %>
+        <span class="jb-badge"><%= name %>: <%= prop[:description].presence || prop[:type].to_s.humanize.downcase %></span>
+      <% end %>
+    </div>
+  <% end %>
+  <pre class="jb-code"><%= "{{ #{component.name} #{props.keys.map { |key| %(#{key}=\"...\") }.join(" ")} }}" %></pre>
+</div>

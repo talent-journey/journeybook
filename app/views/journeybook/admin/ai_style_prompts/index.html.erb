@@ -1,0 +1,26 @@
+<header class="jb-header">
+  <div>
+    <p class="jb-eyebrow">AI Builder</p>
+    <h1 class="jb-title">Style prompts</h1>
+    <p class="jb-subtitle">Create reusable instructions for specific page types, such as feature pages or articles.</p>
+  </div>
+  <div class="jb-actions">
+    <%= link_to "Back to AI Builder", new_admin_ai_page_path, class: "jb-button jb-button-secondary" %>
+    <%= link_to "New style prompt", new_admin_ai_style_prompt_path, class: "jb-button" %>
+  </div>
+</header>
+
+<section class="jb-card jb-card-flush">
+  <table class="jb-table">
+    <thead><tr><th>Name</th><th>Instructions</th><th></th></tr></thead>
+    <tbody>
+      <% @style_prompts.each do |style_prompt| %>
+        <tr>
+          <td><strong><%= style_prompt.name %></strong></td>
+          <td><%= truncate(style_prompt.prompt, length: 70) %></td>
+          <td><div class="jb-actions"><%= link_to "Edit", edit_admin_ai_style_prompt_path(style_prompt), class: "jb-button jb-button-secondary" %><%= button_to "Delete", admin_ai_style_prompt_path(style_prompt), method: :delete, class: "jb-button jb-button-danger", data: { turbo_confirm: "Delete this style prompt?" } %></div></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</section>

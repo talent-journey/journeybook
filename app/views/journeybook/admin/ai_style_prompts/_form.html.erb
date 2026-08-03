@@ -1,0 +1,16 @@
+<%= form_with model: [:admin, style_prompt], class: "jb-form jb-card" do |form| %>
+  <%= render "journeybook/admin/shared/errors", record: style_prompt %>
+
+  <div class="jb-field">
+    <%= form.label :name %>
+    <%= form.text_field :name, required: true, placeholder: "Feature page" %>
+  </div>
+  <div class="jb-field jb-prompt">
+    <%= form.label :prompt, "Style instructions" %>
+    <%= form.text_area :prompt, required: true, placeholder: "Describe the tone, structure, components, and any rules for this kind of page." %>
+  </div>
+  <div class="jb-actions">
+    <%= form.submit class: "jb-button" %>
+    <%= link_to "Back", admin_ai_style_prompts_path, class: "jb-button jb-button-secondary" %>
+  </div>
+<% end %>

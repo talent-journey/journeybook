@@ -1,0 +1,16 @@
+<aside class="jb-card jb-reference jb-media-reference">
+  <p class="jb-eyebrow">Image library</p>
+  <p class="jb-subtitle">Paste image URLs into component props.</p>
+  <div class="jb-grid jb-reference-list">
+    <% Journeybook::MediaAsset.order(created_at: :desc).limit(12).each do |asset| %>
+      <div class="jb-media-reference-item">
+        <%= image_tag asset.public_url, alt: asset.alt_text.presence || asset.title, class: "jb-media-reference-thumb" %>
+        <strong><%= asset.title %></strong>
+        <code>image_url=&quot;<%= asset.public_url %>&quot;</code>
+        <% if asset.alt_text.present? %>
+          <code>image_alt=&quot;<%= asset.alt_text %>&quot;</code>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</aside>

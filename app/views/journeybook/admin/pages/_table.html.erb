@@ -1,0 +1,37 @@
+<table class="jb-table">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Path</th>
+      <th>Type</th>
+      <th>Status</th>
+      <th>Site</th>
+      <th>Updated</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% pages.each do |page| %>
+      <tr>
+        <td><strong><%= page.title %></strong><br><span class="jb-badge"><%= page.locale %></span></td>
+        <td><code><%= page.path %></code></td>
+        <td><span class="jb-badge"><%= page.page_type %></span></td>
+        <td><span class="jb-badge jb-badge-<%= page.status %>"><%= page.status %></span></td>
+        <td><%= page.site.name %></td>
+        <td><%= time_ago_in_words(page.updated_at) %> ago</td>
+        <td>
+          <div class="jb-actions">
+            <%= link_to "Edit", edit_admin_page_path(page), class: "jb-button jb-button-secondary", data: { source_edit: true, edit_label: "Edit", source_label: "Edit source", edit_href: edit_admin_page_path(page), source_href: source_admin_page_path(page) } %>
+            <%= link_to "Preview", preview_admin_page_path(page), class: "jb-button jb-button-secondary", target: "_blank", rel: "noopener" %>
+            <%= button_to "Duplicate", duplicate_admin_page_path(page), method: :post, class: "jb-button jb-button-secondary" %>
+            <% if page.published? %>
+              <%= button_to "Draft", draft_admin_page_path(page), method: :patch, class: "jb-button jb-button-secondary" %>
+            <% else %>
+              <%= button_to "Publish", publish_admin_page_path(page), method: :patch, class: "jb-button" %>
+            <% end %>
+          </div>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

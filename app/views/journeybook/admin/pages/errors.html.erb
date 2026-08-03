@@ -1,0 +1,25 @@
+<header class="jb-header">
+  <div>
+    <p class="jb-eyebrow">Publishing errors</p>
+    <h1 class="jb-title"><%= @page.title %></h1>
+    <p class="jb-subtitle">Fix these issues before publishing this page.</p>
+  </div>
+  <div class="jb-actions">
+    <%= link_to "Back to editor", edit_admin_page_path(@page, site_id: @page.site_id, tab: "layout"), class: "jb-button jb-button-secondary" %>
+  </div>
+</header>
+
+<section class="jb-card">
+  <% if @publishing_errors.any? %>
+    <div class="jb-errors">
+      <strong><%= pluralize(@publishing_errors.count, "error") %> prevent publishing:</strong>
+      <ul>
+        <% @publishing_errors.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% else %>
+    <p class="jb-subtitle">This page has no publishing errors.</p>
+  <% end %>
+</section>

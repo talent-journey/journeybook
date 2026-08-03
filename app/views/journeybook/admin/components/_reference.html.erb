@@ -1,0 +1,9 @@
+<aside class="jb-card jb-reference">
+  <p class="jb-eyebrow">Component reference</p>
+  <p class="jb-subtitle">Paste snippets into the Markdown file. Components render through the host app.</p>
+  <div class="jb-grid jb-reference-list">
+    <% Journeybook.components.for_site(current_site).each do |component| %>
+      <%= render "journeybook/admin/components/component", component: component %>
+    <% end %>
+  </div>
+</aside>

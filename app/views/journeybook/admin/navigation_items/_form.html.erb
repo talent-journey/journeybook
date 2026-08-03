@@ -1,0 +1,46 @@
+<%= form_with model: [:admin, menu, item], class: "jb-form jb-card" do |form| %>
+  <%= render "journeybook/admin/shared/errors", record: item %>
+  <% link_type = item.page_id.present? ? "internal" : "external" %>
+  <div class="jb-fields">
+    <div class="jb-field"><%= form.label :label %><%= form.text_field :label, required: true %></div>
+    <div class="jb-field">
+      <label for="navigation_link_type">Link type</label>
+      <%= select_tag :navigation_link_type, options_for_select([["Journeybook page", "internal"], ["External URL", "external"]], link_type), id: "navigation_link_type", data: { navigation_link_type: true } %>
+    </div>
+    <div class="jb-field" data-navigation-internal <%= "hidden" if link_type == "external" %>>
+      <%= form.label :page_id, "Page" %>
+      <%= form.collection_select :page_id, pages, :id, :title, { include_blank: "Select a page" }, disabled: link_type == "external" %>
+    </div>
+    <div class="jb-field" data-navigation-external <%= "hidden" if link_type == "internal" %>>
+      <%= form.label :external_url, "External URL" %>
+      <%= form.text_field :external_url, placeholder: "https://example.com or /#contact", disabled: link_type == "internal" %>
+    </div>
+    <div class="jb-field"><%= form.label :description %><%= form.text_area :description, rows: 3 %></div>
+    <div></div>
+    <div>
+      <label class="jb-checkbox-field"><%= form.check_box :visible %><span>Visible</span></label>
+      <label class="jb-checkbox-field"><%= form.check_box :open_in_new_window %><span>Open in new window</span></label>
+    </div>
+  </div>
+  <div class="jb-actions"><%= form.submit class: "jb-button" %><%= link_to "Back", edit_admin_navigation_menu_path(menu), class: "jb-button jb-button-secondary" %></div>
+<% end %>
+
+<%= javascript_tag nonce: true do %>
+  (() => {
+    const type = document.querySelector("[data-navigation-link-type]");
+    const internal = document.querySelector("[data-navigation-internal]");
+    const external = document.querySelector("[data-navigation-external]");
+    if (!type || !internal || !external) return;
+
+    const sync = () => {
+      const internalLink = type.value === "internal";
+      internal.hidden = !internalLink;
+      external.hidden = internalLink;
+      internal.querySelectorAll("select, input").forEach((field) => { field.disabled = !internalLink; });
+      external.querySelectorAll("select, input").forEach((field) => { field.disabled = internalLink; });
+    };
+
+    type.addEventListener("change", sync);
+    sync();
+  })();
+<% end %>

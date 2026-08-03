@@ -1,0 +1,15 @@
+<header class="jb-header">
+  <div><p class="jb-eyebrow">Redirects</p><h1 class="jb-title">URL redirects</h1></div>
+  <%= link_to "New redirect", new_admin_redirect_path, class: "jb-button" %>
+</header>
+
+<% if @redirects.any? %>
+<section class="jb-card jb-card-flush">
+  <table class="jb-table">
+    <thead><tr><th>From</th><th>To</th><th>Status</th><th></th></tr></thead>
+    <tbody><% @redirects.each do |redirect| %><tr><td><code><%= redirect.from %></code></td><td><code><%= redirect.to %></code></td><td><%= redirect.status_code %></td><td><%= link_to "Edit", edit_admin_redirect_path(redirect), class: "jb-button jb-button-secondary" %></td></tr><% end %></tbody>
+  </table>
+</section>
+<% else %>
+  <p class="jb-subtitle">No redirects have been configured.</p>
+<% end %>

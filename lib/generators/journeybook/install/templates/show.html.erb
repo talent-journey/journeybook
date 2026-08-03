@@ -1,0 +1,10 @@
+<% content_for :title, @journeybook_page.meta_title.presence || @journeybook_page.title %>
+<% content_for :head do %>
+  <% if @journeybook_page.meta_description.present? %>
+    <meta name="description" content="<%= @journeybook_page.meta_description %>">
+  <% end %>
+<% end %>
+
+<article class="journeybook-page">
+  <%= @journeybook_html.html_safe %>
+</article>

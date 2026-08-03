@@ -1,0 +1,46 @@
+<% content_for :main_class, "jb-main-wide" %>
+
+<header class="jb-header">
+  <div>
+    <p class="jb-eyebrow">Components</p>
+    <h1 class="jb-title">Design library</h1>
+    <p class="jb-subtitle">These registered components are available in Markdown and in the AI page builder.</p>
+  </div>
+</header>
+
+<section class="jb-component-library">
+  <aside class="jb-card jb-component-picker" aria-label="Components">
+    <p class="jb-eyebrow">Select component</p>
+    <nav class="jb-component-nav">
+      <% @components.each do |component| %>
+        <%= link_to admin_components_path(component: component.name, site_id: current_site&.id), class: ("is-active" if component == @selected_component), "aria-current": ("page" if component == @selected_component) do %>
+          <strong><%= component.name %></strong>
+          <% if component.metadata[:description].present? %>
+            <span><%= component.metadata[:description] %></span>
+          <% end %>
+        <% end %>
+      <% end %>
+    </nav>
+  </aside>
+
+  <div class="jb-grid">
+    <% if @selected_component %>
+      <section class="jb-card jb-component-preview-card">
+        <header class="jb-header">
+          <div>
+            <p class="jb-eyebrow">Preview</p>
+            <h2 class="jb-card-title"><code>{{ <%= @selected_component.name %> }}</code></h2>
+          </div>
+        </header>
+
+        <iframe class="jb-preview jb-component-preview" src="<%= admin_component_preview_path(@selected_component.name, site_id: current_site&.id) %>" title="<%= @selected_component.name %> preview"></iframe>
+      </section>
+
+      <%= render "component", component: @selected_component %>
+    <% else %>
+      <section class="jb-card">
+        <p class="jb-subtitle">No components are registered for the current site.</p>
+      </section>
+    <% end %>
+  </div>
+</section>

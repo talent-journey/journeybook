@@ -1,0 +1,43 @@
+<header class="jb-header">
+  <div>
+    <p class="jb-eyebrow">Library</p>
+    <h1 class="jb-title">Image library</h1>
+    <p class="jb-subtitle">Global public images uploaded to S3 for use in Journeybook components and AI-generated drafts.</p>
+  </div>
+  <%= link_to "Upload image", new_admin_media_asset_path, class: "jb-button" %>
+</header>
+
+<% if @media_assets.any? %>
+  <section class="jb-media-grid">
+    <% @media_assets.each do |asset| %>
+      <article class="jb-card jb-media-card">
+        <%= image_tag asset.public_url, alt: asset.alt_text.presence || asset.title, class: "jb-media-thumb" %>
+        <div class="jb-media-body">
+          <h2 class="jb-card-title"><%= asset.title %></h2>
+          <p class="jb-subtitle"><%= asset.original_filename %></p>
+          <% if asset.alt_text.present? %>
+            <p><strong>Alt:</strong> <%= asset.alt_text %></p>
+          <% end %>
+          <% if asset.tags.present? %>
+            <p><strong>Tags:</strong> <%= asset.tags %></p>
+          <% end %>
+          <div class="jb-media-snippets">
+            <code>image_url=&quot;<%= asset.public_url %>&quot;</code>
+            <% if asset.alt_text.present? %>
+              <code>image_alt=&quot;<%= asset.alt_text %>&quot;</code>
+            <% end %>
+          </div>
+          <div class="jb-actions">
+            <%= link_to "Open", asset.public_url, class: "jb-button jb-button-secondary", target: "_blank", rel: "noopener" %>
+            <%= button_to "Delete", admin_media_asset_path(asset), method: :delete, class: "jb-button jb-button-danger", form: { data: { turbo_confirm: "Delete this image from S3 and the library?" } } %>
+          </div>
+        </div>
+      </article>
+    <% end %>
+  </section>
+<% else %>
+  <section class="jb-card">
+    <h2 class="jb-card-title">No images yet</h2>
+    <p class="jb-subtitle">Upload the first image to make it available to editors and the AI Builder.</p>
+  </section>
+<% end %>

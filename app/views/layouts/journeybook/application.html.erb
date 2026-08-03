@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Journeybook</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+
+  <%= yield :head %>
+
+  <%= stylesheet_link_tag "journeybook/application", media: "all" %>
+  <%= javascript_importmap_tags "journeybook" %>
+</head>
+<body>
+<div class="jb-shell">
+  <aside class="jb-sidebar">
+    <a class="jb-brand" href="<%= root_path %>">
+      <%= image_tag "journeybook/logo.svg", class: "jb-brand-logo", alt: "" %>
+      <strong>JOURNEYBOOK</strong>
+    </a>
+    <nav class="jb-nav" aria-label="Admin navigation">
+      <%= link_to "Dashboard",  root_path,              class: ("is-active" if admin_nav_active?(:dashboard)), "aria-current": ("page" if admin_nav_active?(:dashboard)) %>
+      <%= link_to "Pages",      admin_pages_path,       class: ("is-active" if admin_nav_active?(:pages)),     "aria-current": ("page" if admin_nav_active?(:pages)) %>
+      <%= link_to "Navigation", admin_navigation_menus_path, class: ("is-active" if admin_nav_active?(:navigation)), "aria-current": ("page" if admin_nav_active?(:navigation)) %>
+      <%= link_to "Sites",      admin_sites_path,       class: ("is-active" if admin_nav_active?(:sites)),     "aria-current": ("page" if admin_nav_active?(:sites)) %>
+      <%= link_to "Redirects",  admin_redirects_path,    class: ("is-active" if admin_nav_active?(:redirects)), "aria-current": ("page" if admin_nav_active?(:redirects)) %>
+      <%= link_to "Components", admin_components_path,  class: ("is-active" if admin_nav_active?(:components)), "aria-current": ("page" if admin_nav_active?(:components)) %>
+      <%= link_to "Library",    admin_media_assets_path, class: ("is-active" if admin_nav_active?(:library)),   "aria-current": ("page" if admin_nav_active?(:library)) %>
+      <%= link_to "AI Builder", new_admin_ai_page_path, class: ("is-active" if admin_nav_active?(:ai)),        "aria-current": ("page" if admin_nav_active?(:ai)) %>
+    </nav>
+    <% if Journeybook::Site.exists? %>
+      <div class="jb-context">
+        <label for="journeybook_site_context">Site context</label>
+        <select id="journeybook_site_context" onchange="if (this.value) window.location = this.value">
+          <% Journeybook::Site.order(:name).each do |site| %>
+            <option value="<%= site_context_path(site) %>" <%= "selected" if site == current_site %>><%= site.name %></option>
+          <% end %>
+        </select>
+      </div>
+    <% end %>
+  </aside>
+
+  <main class="jb-main <%= content_for(:main_class) %>">
+    <%= yield %>
+  </main>
+</div>
+<div class="jb-flashes" aria-live="polite" aria-atomic="true">
+  <% if notice.present? %>
+    <p class="jb-notice" data-flash><%= notice %></p>
+  <% end %>
+  <% if alert.present? %>
+    <p class="jb-alert" data-flash><%= alert %></p>
+  <% end %>
+</div>
+<%= javascript_include_tag "journeybook/sortable", defer: true %>
+</body>
+</html>

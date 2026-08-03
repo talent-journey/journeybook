@@ -1,0 +1,12 @@
+<%= form_with model: [:admin, site], class: "jb-form jb-card" do |form| %>
+  <%= render "journeybook/admin/shared/errors", record: site %>
+  <div class="jb-fields">
+    <div class="jb-field"><%= form.label :name %><%= form.text_field :name, required: true %></div>
+    <div class="jb-field"><%= form.label :key %><%= form.text_field :key, required: true, placeholder: "marketing" %></div>
+    <div class="jb-field"><%= form.label :host %><%= form.text_field :host, required: true %></div>
+    <div class="jb-field"><%= form.label :path_prefix %><%= form.text_field :path_prefix, required: true, placeholder: "/blog" %></div>
+    <div class="jb-field"><%= form.label :layout %><%= form.text_field :layout, placeholder: "application" %></div>
+    <div class="jb-field"><%= form.label :default_locale %><%= form.text_field :default_locale, required: true %></div>
+  </div>
+  <div class="jb-actions"><%= form.submit "Save site", class: "jb-button" %><%= link_to "Back", admin_sites_path, class: "jb-button jb-button-secondary" %></div>
+<% end %>

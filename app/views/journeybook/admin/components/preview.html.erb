@@ -1,0 +1,13 @@
+<% content_for :title, "#{@selected_component&.name || "Component"} preview" %>
+<% content_for :journeybook_component_preview, true %>
+
+<article class="journeybook-page journeybook-component-preview">
+  <% if @preview_error.present? %>
+    <section>
+      <h1>Preview could not be rendered.</h1>
+      <p><%= @preview_error %></p>
+    </section>
+  <% else %>
+    <%= @preview_html.html_safe %>
+  <% end %>
+</article>

@@ -1,0 +1,6 @@
+/*.gem
+/pkg/
+/test/dummy/log/
+/test/dummy/storage/
+/test/dummy/tmp/local_secret.txt
+/test/tmp/

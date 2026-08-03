@@ -1,0 +1,73 @@
+<%= form_with model: [:admin, page], class: "jb-form" do |form| %>
+  <%= render "journeybook/admin/shared/errors", record: page %>
+  <%= form.hidden_field :status, value: "draft" %>
+  <%= hidden_field_tag :template_key, selected_template&.key %>
+
+  <div class="jb-grid jb-grid-2">
+    <section class="jb-card jb-form">
+      <div class="jb-fields">
+        <div class="jb-field">
+          <%= form.label :site_id %>
+          <%= form.collection_select :site_id, sites, :id, :name %>
+        </div>
+        <div class="jb-field">
+          <%= form.label :title %>
+          <%= form.text_field :title, required: true %>
+        </div>
+        <div class="jb-field">
+          <%= form.label :page_type %>
+          <%= form.select :page_type, Journeybook::Page::PAGE_TYPES %>
+        </div>
+        <div class="jb-field">
+          <%= form.label :path %>
+          <%= form.text_field :path, required: selected_template&.path_prefix.blank?, placeholder: selected_template&.path_hint || "/about" %>
+          <% if selected_template&.path_prefix %>
+            <small class="jb-help">Leave blank to generate a path from the title.</small>
+          <% end %>
+        </div>
+        <div class="jb-field">
+          <%= form.label :author_name %>
+          <%= form.text_field :author_name, placeholder: "Optional author byline" %>
+        </div>
+        <div class="jb-field">
+          <%= form.label :topic %>
+          <%= form.text_field :topic, placeholder: "Optional topic, e.g. HR" %>
+        </div>
+        <div class="jb-field">
+          <%= form.label :locale %>
+          <%= form.text_field :locale, required: true %>
+        </div>
+        <div class="jb-field">
+          <%= form.label :meta_title %>
+          <%= form.text_field :meta_title %>
+        </div>
+      </div>
+
+      <div class="jb-field jb-field-short">
+        <%= form.label :excerpt %>
+        <%= form.text_area :excerpt %>
+        <small class="jb-help">Short summary for blog cards, RSS, and SEO.</small>
+      </div>
+
+      <div class="jb-field jb-field-short">
+        <%= form.label :meta_description %>
+        <%= form.text_area :meta_description %>
+      </div>
+
+      <div class="jb-field jb-markdown">
+        <%= form.label :markdown, "Page content" %>
+        <%= form.text_area :markdown, required: true, spellcheck: false %>
+      </div>
+
+      <div class="jb-actions">
+        <%= form.submit "Save page", class: "jb-button" %>
+        <%= link_to "Back", admin_pages_path, class: "jb-button jb-button-secondary" %>
+      </div>
+    </section>
+
+    <div class="jb-reference-stack">
+      <%= render "journeybook/admin/components/reference" %>
+      <%= render "journeybook/admin/media_assets/reference" %>
+    </div>
+  </div>
+<% end %>

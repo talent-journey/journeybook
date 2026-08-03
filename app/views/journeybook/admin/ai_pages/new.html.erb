@@ -1,0 +1,43 @@
+<header class="jb-header">
+  <div>
+    <p class="jb-eyebrow">AI Builder</p>
+    <h1 class="jb-title">Generate an AI-powered page</h1>
+    <p class="jb-subtitle">Describe the page, choose an approved template when needed, and review the generated draft before saving it.</p>
+  </div>
+  <%= link_to "Manage style prompts", admin_ai_style_prompts_path, class: "jb-button jb-button-secondary" %>
+</header>
+
+<%= form_with url: admin_ai_page_path, scope: :page, class: "jb-form" do |form| %>
+  <%= render "journeybook/admin/shared/errors", record: @page %>
+
+  <section class="jb-card jb-form jb-ai-card">
+    <div class="jb-field jb-prompt">
+      <label for="prompt">Prompt</label>
+      <textarea id="prompt" name="prompt" placeholder="Build a landing page for ..."><%= @prompt %></textarea>
+    </div>
+    <div class="jb-fields jb-ai-fields">
+       <div class="jb-field"><label for="ai_style_prompt_id">Style prompt</label><%= select_tag :ai_style_prompt_id, options_from_collection_for_select(@style_prompts, :id, :name, @style_prompt&.id), include_blank: "No style prompt" %></div>
+       <div class="jb-field"><label for="template_key">Template</label><%= select_tag :template_key, options_from_collection_for_select(@templates, :key, :name, @selected_template&.key), include_blank: "General page" %></div>
+       <div class="jb-field"><%= form.label :site_id %><%= form.collection_select :site_id, @sites, :id, :name %></div>
+      <div class="jb-field"><%= form.label :title %><%= form.text_field :title %></div>
+      <div class="jb-field"><%= form.label :path %><%= form.text_field :path, placeholder: "/new-page" %></div>
+      <div class="jb-field"><%= form.label :locale %><%= form.text_field :locale %></div>
+    </div>
+    <div class="jb-actions">
+      <%= form.submit "Generate page", class: "jb-button" %>
+    </div>
+  </section>
+<% end %>
+
+<% if @page.markdown.present? %>
+  <section class="jb-section-lg">
+    <header class="jb-header">
+      <div>
+        <p class="jb-eyebrow">Generated page</p>
+        <h2>Review and save</h2>
+        <p class="jb-subtitle">This draft has not been saved yet. Review the page content, then save it.</p>
+      </div>
+    </header>
+    <%= render "draft_form", page: @page, sites: @sites, selected_template: @selected_template %>
+  </section>
+<% end %>

@@ -1,0 +1,27 @@
+<% content_for :title, @journeybook_page.meta_title.presence || @journeybook_page.title %>
+<% content_for :head do %>
+  <% if @journeybook_page.meta_description.present? %>
+    <meta name="description" content="<%= @journeybook_page.meta_description %>">
+  <% end %>
+<% end %>
+
+<article class="journeybook-page"<% if params[:component].present? %> style="padding-top: 6rem"<% end %>>
+  <%= @journeybook_html.html_safe %>
+</article>
+
+<%= javascript_tag nonce: true do %>
+  window.addEventListener("message", (event) => {
+    if (event.origin !== window.location.origin || event.data?.type !== "journeybook:scroll-preview") return;
+
+    const index = Number(event.data.componentIndex);
+    if (!Number.isInteger(index)) return;
+
+    const anchor = document.getElementById(`journeybook-preview-component-${index}`);
+    if (!anchor) return;
+
+    window.scrollTo({
+      top: Math.max(0, anchor.getBoundingClientRect().top + window.scrollY - 48),
+      behavior: "smooth"
+    });
+  });
+<% end %>

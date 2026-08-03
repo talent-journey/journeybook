@@ -1,0 +1,23 @@
+<dialog class="jb-image-picker-modal" data-image-picker-modal>
+  <div class="jb-image-picker-modal-header">
+    <div>
+      <p class="jb-eyebrow">Image library</p>
+      <h2>Select an image</h2>
+    </div>
+    <button type="button" class="jb-image-picker-close" data-image-picker-close aria-label="Close image library">×</button>
+  </div>
+
+  <div class="jb-image-picker-grid">
+    <% @media_assets.each do |asset| %>
+      <% image_url = asset.public_url %>
+      <button type="button" class="jb-image-picker-asset" data-image-picker-asset data-image-url="<%= image_url %>" data-image-title="<%= asset.title %>">
+        <%= image_tag image_url, alt: asset.alt_text.presence || asset.title %>
+        <span><strong><%= asset.title %></strong><small><%= asset.alt_text.presence || asset.original_filename %></small></span>
+      </button>
+    <% end %>
+  </div>
+
+  <div class="jb-image-picker-modal-footer">
+    <%= link_to "Manage library", admin_media_assets_path, class: "jb-link-button" %>
+  </div>
+</dialog>

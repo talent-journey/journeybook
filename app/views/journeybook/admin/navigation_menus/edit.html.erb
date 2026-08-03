@@ -1,0 +1,38 @@
+<header class="jb-header">
+  <div><p class="jb-eyebrow">Navigation</p><h1 class="jb-title"><%= @menu.title %></h1></div>
+  <%= button_to "Delete menu", admin_navigation_menu_path(@menu), method: :delete, class: "jb-button jb-button-danger", data: { turbo_confirm: "Delete this menu and all of its items?" } %>
+</header>
+
+<%= render "form", menu: @menu %>
+
+<section class="jb-section-lg">
+  <div class="jb-header">
+    <div>
+      <h2 class="jb-card-title">Menu items</h2>
+      <p class="jb-subtitle">Items can link to a Journeybook page or to an external URL. Drag the handle to reorder.</p>
+    </div>
+    <%= link_to "Add item", new_admin_navigation_menu_navigation_item_path(@menu), class: "jb-button" %>
+  </div>
+
+  <div class="jb-card jb-card-flush">
+    <% if @items.any? %>
+      <div class="jb-sortable-list" data-sortable-list data-sortable-url="<%= reorder_admin_navigation_menu_navigation_items_path(@menu) %>" data-sortable-param="item_ids">
+        <% @items.each do |item| %>
+          <div class="jb-sortable-item" data-sortable-item data-sortable-id="<%= item.id %>" draggable="true">
+            <%= render "journeybook/admin/shared/drag_handle" %>
+            <div class="jb-sortable-item-body">
+              <strong><%= item.label %></strong>
+              <% if item.description.present? %><span class="jb-subtitle"><%= item.description %></span><% end %>
+              <small><%= item.page ? item.page.path : item.external_url %> · <%= item.visible? ? "Visible" : "Hidden" %></small>
+            </div>
+            <div class="jb-actions">
+              <%= link_to "Edit", edit_admin_navigation_menu_navigation_item_path(@menu, item), class: "jb-button jb-button-secondary" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="jb-subtitle">This menu has no items yet.</p>
+    <% end %>
+  </div>
+</section>

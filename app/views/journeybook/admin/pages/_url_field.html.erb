@@ -1,0 +1,25 @@
+<% page_id = value.to_s[%r{\Ajourneybook://page/(\d+)\z}, 1] %>
+<div class="jb-url-editor" data-url-editor>
+  <input type="hidden" name="component_props[<%= name %>]" value="<%= value %>" id="component_props_<%= name %>" data-url-value>
+  <label>Destination
+    <select data-url-kind>
+      <option value="internal" <%= "selected" if page_id %>>Journeybook page</option>
+      <option value="external" <%= "selected" unless page_id %>>External URL</option>
+    </select>
+  </label>
+  <label data-url-internal>Journeybook page
+    <select data-url-page>
+      <option value="">Select a page</option>
+      <%= options_for_select(@linkable_pages.map { |page| [ "#{page.title} (#{page.path})", "journeybook://page/#{page.id}" ] }, "journeybook://page/#{page_id}") %>
+    </select>
+  </label>
+  <label data-url-external>External URL
+    <input type="text" value="<%= page_id ? "" : value %>" placeholder="https://example.com or /anchor" data-url-external-input>
+  </label>
+  <label>Open link
+    <select name="component_props[<%= name %>_target]" data-url-target>
+      <option value="same_window">Current window</option>
+      <option value="open_new_window" <%= "selected" if @selected_page_component.props["#{name}_target".to_sym] == "open_new_window" %>>New window</option>
+    </select>
+  </label>
+</div>

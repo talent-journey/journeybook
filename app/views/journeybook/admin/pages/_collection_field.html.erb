@@ -1,0 +1,58 @@
+<% items = JSON.parse(value.presence || "[]") rescue [] %>
+<div class="jb-collection" data-collection data-collection-min="<%= prop[:min] %>" data-collection-max="<%= prop[:max] %>" data-collection-schema="<%= ERB::Util.json_escape(prop[:item].to_json) %>" data-collection-pages="<%= ERB::Util.json_escape(@linkable_pages.map { |page| { title: page.title, path: page.path, value: "journeybook://page/#{page.id}" } }.to_json) %>">
+  <input type="hidden" name="component_props[<%= name %>]" id="component_props_<%= name %>" value="<%= items.to_json %>" data-collection-input>
+  <div class="jb-collection-items" data-collection-items>
+    <% items.each_with_index do |item, index| %>
+      <fieldset class="jb-collection-item" data-collection-item draggable="true">
+        <legend><%= prop[:label] %> <%= index + 1 %></legend>
+        <button type="button" class="jb-collection-remove" data-collection-remove aria-label="Remove <%= prop[:label].downcase %> <%= index + 1 %>" title="Remove">×</button>
+        <%= render "journeybook/admin/shared/drag_handle" %>
+        <div class="jb-collection-fields">
+          <% prop[:item].each do |item_name, item_prop| %>
+            <% item_value = item[item_name.to_s] || item[item_name.to_sym] %>
+            <label><%= item_prop[:label] %>
+              <% if item_prop[:type] == :long_text %>
+                <textarea rows="3" data-collection-field data-collection-key="<%= item_name %>"><%= item_value %></textarea>
+              <% elsif item_prop[:type] == :select %>
+                <select data-collection-field data-collection-key="<%= item_name %>"><%= options_for_select(item_prop[:options], item_value) %></select>
+              <% elsif item_prop[:type] == :image %>
+                <% icon_parts = item_value.to_s.match(%r{\Aicon:([a-z0-9-]+):([a-z0-9-]+):([a-z0-9-]+)\z})&.captures %>
+                <input type="hidden" value="<%= item_value %>" data-collection-field data-collection-key="<%= item_name %>">
+                <% if @media_assets.any? %>
+                  <button type="button" class="jb-image-picker-trigger" data-image-picker-open>
+                    <% if item_value.present? && !icon_parts %><%= image_tag item_value, alt: "", class: "jb-image-picker-preview" %><% end %>
+                    <span data-image-picker-label><%= item_value.present? ? "Change image" : "Select image" %></span>
+                  </button>
+                <% else %>
+                  <%= link_to "Add an image to the library", admin_media_assets_path, class: "jb-link-button" %>
+                <% end %>
+                <% if item_prop[:icons] %>
+                  <div class="jb-icon-editor" data-icon-editor>
+                    <select data-icon-mode><option value="image" <%= "selected" unless icon_parts %>>Image</option><option value="icon" <%= "selected" if icon_parts %>>Font Awesome icon</option></select>
+                    <input type="text" value="<%= icon_parts&.last %>" placeholder="user-cowboy" data-icon-identifier>
+                    <select data-icon-style><%= options_for_select(item_prop[:icons][:styles], icon_parts&.first) %></select>
+                    <select data-icon-color><%= options_for_select(item_prop[:icons][:colors], icon_parts&.second) %></select>
+                  </div>
+                <% end %>
+              <% elsif item_prop[:type] == :url %>
+                <% page_id = item_value.to_s[%r{\Ajourneybook://page/(\d+)\z}, 1] %>
+                <div class="jb-url-editor" data-collection-url-editor>
+                  <input type="hidden" value="<%= item_value %>" data-collection-field data-collection-key="<%= item_name %>" data-url-value>
+                  <select data-url-kind><option value="internal" <%= "selected" if page_id %>>Journeybook page</option><option value="external" <%= "selected" unless page_id %>>External URL</option></select>
+                  <select data-url-page data-url-internal><option value="">Select a page</option><%= options_for_select(@linkable_pages.map { |page| [ "#{page.title} (#{page.path})", "journeybook://page/#{page.id}" ] }, "journeybook://page/#{page_id}") %></select>
+                  <input type="text" value="<%= page_id ? "" : item_value %>" placeholder="https://example.com" data-url-external data-url-external-input>
+                  <select data-collection-field data-collection-key="<%= item_name %>_target" data-url-target><option value="same_window">Current window</option><option value="open_new_window" <%= "selected" if item["#{item_name}_target"] == "open_new_window" || item["#{item_name}_target".to_sym] == "open_new_window" %>>New window</option></select>
+                </div>
+              <% else %>
+                <input type="text" value="<%= item_value %>" data-collection-field data-collection-key="<%= item_name %>">
+              <% end %>
+            </label>
+          <% end %>
+        </div>
+      </fieldset>
+    <% end %>
+  </div>
+  <div>
+    <button type="button" class="jb-button" data-collection-add>+ Add item</button>
+  </div>
+</div>

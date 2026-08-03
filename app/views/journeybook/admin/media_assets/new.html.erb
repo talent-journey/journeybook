@@ -1,0 +1,41 @@
+<header class="jb-header">
+  <div>
+    <p class="jb-eyebrow">Library</p>
+    <h1 class="jb-title">Upload image</h1>
+  </div>
+</header>
+
+<%= form_with model: [:admin, @media_asset], class: "jb-form jb-card", multipart: true do |form| %>
+  <%= render "journeybook/admin/shared/errors", record: @media_asset %>
+
+  <div class="jb-field">
+    <%= form.label :file, "Image file" %>
+    <%= form.file_field :file, accept: Journeybook::MediaAsset::IMAGE_CONTENT_TYPES.join(","), required: true %>
+    <small class="jb-help">Supported formats: PNG, JPEG, WebP, GIF, and SVG.</small>
+  </div>
+
+  <div class="jb-fields">
+    <div class="jb-field">
+      <%= form.label :title %>
+      <%= form.text_field :title, placeholder: "Defaults to the filename" %>
+    </div>
+    <div class="jb-field">
+      <%= form.label :alt_text %>
+      <%= form.text_field :alt_text %>
+    </div>
+    <div class="jb-field">
+      <%= form.label :tags %>
+      <%= form.text_field :tags, placeholder: "hero, team, product" %>
+    </div>
+  </div>
+
+  <div class="jb-field jb-field-short">
+    <%= form.label :description %>
+    <%= form.text_area :description %>
+  </div>
+
+  <div class="jb-actions">
+    <%= form.submit "Upload image", class: "jb-button" %>
+    <%= link_to "Back", admin_media_assets_path, class: "jb-button jb-button-secondary" %>
+  </div>
+<% end %>

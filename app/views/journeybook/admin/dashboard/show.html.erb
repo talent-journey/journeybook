@@ -1,0 +1,34 @@
+<header class="jb-header">
+  <div>
+    <p class="jb-eyebrow">Admin</p>
+    <h1 class="jb-title">Journeybook</h1>
+    <p class="jb-subtitle">Create Markdown pages, compose them with registered Ruby components, and generate AI drafts from the same component library.</p>
+  </div>
+  <%= link_to "New page", new_admin_page_path, class: "jb-button" %>
+</header>
+
+<section class="jb-grid jb-grid-3">
+  <div class="jb-card jb-stat">
+    <strong><%= @site_count %></strong>
+    <span class="jb-stat-label">Sites</span>
+  </div>
+  <div class="jb-card jb-stat">
+    <strong><%= @published_page_count %>/<%= @page_count %></strong>
+    <span class="jb-stat-label">Published pages</span>
+  </div>
+  <div class="jb-card jb-stat">
+    <strong><%= @component_count %></strong>
+    <span class="jb-stat-label">Components</span>
+  </div>
+</section>
+
+<section class="jb-card jb-section">
+  <div class="jb-header">
+    <div>
+      <p class="jb-eyebrow">Recent</p>
+      <h2 class="jb-card-title">Recently updated pages</h2>
+    </div>
+    <%= link_to "AI Builder", new_admin_ai_page_path, class: "jb-button jb-button-secondary" %>
+  </div>
+  <%= render "journeybook/admin/pages/table", pages: @recent_pages %>
+</section>

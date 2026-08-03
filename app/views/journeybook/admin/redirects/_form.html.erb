@@ -1,0 +1,9 @@
+<%= form_with model: [:admin, redirect], class: "jb-form jb-card" do |form| %>
+  <%= render "journeybook/admin/shared/errors", record: redirect %>
+  <div class="jb-fields">
+    <div class="jb-field"><%= form.label :from %><%= form.text_field :from, required: true, placeholder: "/old-page" %></div>
+    <div class="jb-field"><%= form.label :to %><%= form.text_field :to, required: true, placeholder: "/new-page" %></div>
+    <div class="jb-field"><%= form.label :status_code %><%= form.select :status_code, Journeybook::Redirect::VALID_STATUS_CODES %></div>
+  </div>
+  <div class="jb-actions"><%= form.submit class: "jb-button" %><%= link_to "Back", admin_redirects_path, class: "jb-button jb-button-secondary" %></div>
+<% end %>

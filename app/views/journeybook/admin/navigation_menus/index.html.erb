@@ -1,0 +1,28 @@
+<header class="jb-header">
+  <div>
+    <p class="jb-eyebrow">Navigation</p>
+    <h1 class="jb-title">Navigation menus</h1>
+    <p class="jb-subtitle">Create menu slots used by the host layout, then add pages or external links.</p>
+  </div>
+  <%= link_to "New menu", new_admin_navigation_menu_path, class: "jb-button" %>
+</header>
+
+<section class="jb-card jb-card-flush">
+  <% if @menus.any? %>
+    <table class="jb-table">
+      <thead><tr><th>Title</th><th>Key</th><th>Items</th><th></th></tr></thead>
+      <tbody>
+        <% @menus.each do |menu| %>
+          <tr>
+            <td><strong><%= menu.title %></strong></td>
+            <td><code><%= menu.key %></code></td>
+            <td><%= menu.items.count %></td>
+            <td><%= link_to "Edit", edit_admin_navigation_menu_path(menu), class: "jb-button jb-button-secondary" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p class="jb-subtitle">No navigation menus have been configured for this site.</p>
+  <% end %>
+</section>

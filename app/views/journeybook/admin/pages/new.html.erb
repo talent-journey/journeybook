@@ -1,0 +1,27 @@
+<% content_for :main_class, "jb-main-wide" %>
+
+<header class="jb-header">
+  <div>
+    <p class="jb-eyebrow">New page</p>
+    <h1 class="jb-title">Choose a starting point</h1>
+  </div>
+</header>
+
+<section class="jb-card">
+  <div class="jb-fields">
+    <div class="jb-field">
+      <strong>Blank page</strong>
+      <p class="jb-help">Start with a general content page.</p>
+      <%= link_to "Choose blank page", new_admin_page_path(site_id: @page.site_id), class: "jb-button jb-button-secondary" %>
+    </div>
+    <% @templates.each do |template| %>
+      <div class="jb-field">
+        <strong><%= template.name %></strong>
+        <p class="jb-help"><%= template.description %></p>
+        <%= link_to "Use #{template.name}", new_admin_page_path(site_id: @page.site_id, template: template.key), class: "jb-button #{"jb-button-secondary" if template != @selected_template}" %>
+      </div>
+    <% end %>
+  </div>
+</section>
+
+<%= render "form", page: @page, sites: @sites, selected_template: @selected_template %>

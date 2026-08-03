@@ -1,0 +1,52 @@
+<header class="jb-header">
+  <div>
+    <p class="jb-eyebrow">Pages</p>
+    <h1 class="jb-title">Content pages</h1>
+  </div>
+  <div class="jb-actions">
+    <%= link_to "AI draft", new_admin_ai_page_path, class: "jb-button jb-button-secondary" %>
+    <% { blog_post: "New blog post", kb_article: "New help article", glossary_term: "New glossary term" }.each do |key, label| %>
+      <% if Journeybook.templates.for_site(current_site).any? { |template| template.key == key } %>
+        <%= link_to label, new_admin_page_path(template: key), class: "jb-button jb-button-secondary" %>
+      <% end %>
+    <% end %>
+    <%= link_to "New page", new_admin_page_path, class: "jb-button" %>
+  </div>
+</header>
+
+<div class="jb-actions">
+  <% ["all", *Journeybook::Page::PAGE_TYPES].each do |type| %>
+    <% active = (params[:type].presence || "all") == type %>
+    <%= link_to type.humanize, admin_pages_path(site_id: current_site&.id, type: type == "all" ? nil : type), class: "jb-button jb-button-secondary#{" is-active" if active}" %>
+  <% end %>
+</div>
+
+<section class="jb-card jb-card-flush">
+<%= render "table", pages: @pages %>
+
+<%= javascript_tag nonce: true do %>
+  (() => {
+    const editLinks = document.querySelectorAll("[data-source-edit]");
+
+    const setSourceMode = (enabled) => {
+      editLinks.forEach((link) => {
+        link.textContent = enabled ? link.dataset.sourceLabel : link.dataset.editLabel;
+        link.href = enabled ? link.dataset.sourceHref : link.dataset.editHref;
+      });
+    };
+
+    window.addEventListener("keydown", (event) => setSourceMode(event.shiftKey));
+    window.addEventListener("keyup", (event) => setSourceMode(event.shiftKey));
+    window.addEventListener("blur", () => setSourceMode(false));
+
+    editLinks.forEach((link) => {
+      link.addEventListener("click", (event) => {
+        if (!event.shiftKey) return;
+
+        event.preventDefault();
+        window.location.assign(link.dataset.sourceHref);
+      });
+    });
+  })();
+<% end %>
+</section>

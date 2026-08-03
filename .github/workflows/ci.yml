@@ -67,3 +67,28 @@ jobs:
           name: screenshots
           path: ${{ github.workspace }}/tmp/screenshots
           if-no-files-found: ignore
+
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ruby-3.4.8
+          bundler-cache: true
+
+      - name: Build and validate gem
+        run: |
+          bundle exec rake build
+          gem check pkg/journeybook-*.gem
+          ruby -rrubygems/package -e 'spec = Gem::Package.new(Dir["pkg/journeybook-*.gem"].first).spec; required = %w[CHANGELOG.md MIT-LICENSE README.md Rakefile lib/journeybook.rb]; abort "Missing packaged files" unless required.all? { |file| spec.files.include?(file) }; puts "Package validated: #{spec.name} #{spec.version} (#{spec.files.length} files)"'
+
+      - name: Smoke test installed gem
+        run: |
+          smoke_dir=$(mktemp -d)
+          bundled_gem_path=$(bundle exec ruby -e 'puts Gem.path.join(":")')
+          gem install --local --ignore-dependencies --no-document --install-dir "$smoke_dir" pkg/journeybook-*.gem
+          GEM_HOME="$smoke_dir" GEM_PATH="$smoke_dir:$bundled_gem_path" ruby -rrails -e 'gem "journeybook"; require "journeybook"; puts "Installed gem loads"'

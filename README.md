@@ -77,20 +77,23 @@ Configure the production release command to run `bin/rails db:migrate`. Store Jo
 RubyGems releases are immutable. Use semantic versioning and update both `lib/journeybook/version.rb` and `CHANGELOG.md` before releasing.
 
 ```bash
-bin/rails db:test:prepare test
+bin/rails db:test:prepare && bin/rails test
 bin/rubocop -f github
 bundle exec rake build
 gem check pkg/journeybook-*.gem
 ```
 
-Create and push a tag matching the gem version, for example:
+Run the Release workflow manually from GitHub Actions after the version bump and changelog commit are merged. It runs tests and linting, then `rubygems/release-gem` creates the matching Git tag and publishes the gem.
 
-```bash
-git tag v0.1.0
-git push origin v0.1.0
+For RubyGems Trusted Publishing, configure the `journeybook` gem with this GitHub Actions publisher after the first release:
+
+```text
+Owner: talent-journey
+Repository: journeybook
+Workflow: .github/workflows/release.yml
 ```
 
-The release workflow validates the tag, runs tests and linting, builds the gem, and publishes it. Before the first release, create the RubyGems owner account, enable MFA, and add a `RUBYGEMS_API_KEY` repository secret with permission to push this gem. The gemspec requires RubyGems MFA for future releases.
+Trusted Publishing uses GitHub OIDC, so it needs no `RUBYGEMS_API_KEY` and no one-time MFA code. The first release must be published manually with an MFA code before a gem-specific publisher can be configured.
 
 ## Credentials
 

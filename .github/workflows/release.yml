@@ -44,8 +44,9 @@ jobs:
       - name: Smoke test installed gem
         run: |
           smoke_dir=$(mktemp -d)
+          bundled_gem_path=$(bundle exec ruby -e 'puts Gem.path.join(":")')
           gem install --local --ignore-dependencies --no-document --install-dir "$smoke_dir" pkg/journeybook-*.gem
-          GEM_HOME="$smoke_dir" GEM_PATH="$smoke_dir:$(ruby -e 'puts Gem.path.join(":")')" ruby -rrails -e 'gem "journeybook"; require "journeybook"; puts "Installed gem loads"'
+          GEM_HOME="$smoke_dir" GEM_PATH="$smoke_dir:$bundled_gem_path" ruby -rrails -e 'gem "journeybook"; require "journeybook"; puts "Installed gem loads"'
 
       - name: Publish to RubyGems
         if: github.event_name == 'push'
